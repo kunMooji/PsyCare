@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
+
 package com.panel;
 
 import java.awt.GridLayout;
@@ -17,10 +14,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import koneksi.konek;
 
-/**
- *
- * @author hilmi
- */
+
 public class adm_data_dokter extends javax.swing.JPanel {
 
       private Connection connection;
@@ -28,18 +22,15 @@ public class adm_data_dokter extends javax.swing.JPanel {
     public adm_data_dokter() {
           initComponents();
         try {
-            // Inisialisasi koneksi menggunakan class konek
-            connection = konek.GetConnection();  // Menggunakan koneksi dari class konek
+            connection = konek.GetConnection(); 
             loadDataToTable();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Koneksi ke database gagal: " + e.getMessage());
         }
     }
 
-    // Memuat data rumah sakit ke dalam tabel
 private void loadDataToTable() {
     try {
-        // Query untuk mengambil data dokter
         String query = "SELECT id_dokter, nama_dokter, jam_praktek, no_telp FROM dokter";
         Statement stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery(query);
@@ -51,13 +42,11 @@ private void loadDataToTable() {
             int idDok = rs.getInt("id_dokter");
             String namaDok = rs.getString("nama_dokter");
             String jamDok = rs.getString("jam_praktek");
-            String noTelp = rs.getString("no_telp"); // Ubah ke getString
+            String noTelp = rs.getString("no_telp"); 
             
-            // Menambahkan data ke model
             model.addRow(new Object[] { idDok, namaDok, jamDok, noTelp});
         }
 
-        // Set model tabel untuk JTable
         tabel_dokter.setModel(model);
 
     } catch (SQLException e) {
@@ -174,8 +163,7 @@ private void loadDataToTable() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void tambah_dokterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tambah_dokterActionPerformed
-        // Create input dialog
-        JPanel panel = new JPanel(new GridLayout(3, 2));
+    JPanel panel = new JPanel(new GridLayout(3, 2));
     JTextField namaField = new JTextField();
     JTextField jamField = new JTextField();
     JTextField notelpField = new JTextField();
@@ -192,7 +180,6 @@ private void loadDataToTable() {
 
     if (result == JOptionPane.OK_OPTION) {
         try {
-            // Validate inputs
             String namaDokter = namaField.getText().trim();
             String jamPraktek = jamField.getText().trim();
             String noTelpDokter = notelpField.getText().trim();
@@ -202,7 +189,6 @@ private void loadDataToTable() {
                 return;
             }
 
-            // Insert into database
             String query = "INSERT INTO dokter (nama_dokter, jam_praktek, no_telp) VALUES (?, ?, ?)";
             PreparedStatement pst = connection.prepareStatement(query);
             pst.setString(1, namaDokter);
@@ -212,7 +198,7 @@ private void loadDataToTable() {
             int rowsAffected = pst.executeUpdate();
             if (rowsAffected > 0) {
                 JOptionPane.showMessageDialog(this, "Data dokter berhasil ditambahkan!");
-                loadDataToTable(); // Refresh table
+                loadDataToTable(); 
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error menambahkan data: " + e.getMessage());
@@ -226,16 +212,13 @@ private void loadDataToTable() {
         JOptionPane.showMessageDialog(this, "Pilih dokter yang akan diupdate!");
         return;
     }
-
     try {
-        // Get data from selected row
         DefaultTableModel model = (DefaultTableModel) tabel_dokter.getModel();
         int idDokter = Integer.parseInt(model.getValueAt(selectedRow, 0).toString());
         String currentNama = model.getValueAt(selectedRow, 1).toString();
         String currentJam = model.getValueAt(selectedRow, 2).toString();
         String currentNoTelp = model.getValueAt(selectedRow, 3).toString();
 
-        // Create input dialog
         JPanel panel = new JPanel(new GridLayout(3, 2));
         JTextField namaField = new JTextField(currentNama);
         JTextField jamField = new JTextField(currentJam);
@@ -252,24 +235,23 @@ private void loadDataToTable() {
             JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
         if (result == JOptionPane.OK_OPTION) {
-            // Validate inputs
+       
             String newNamaDokter = namaField.getText().trim();
             String newJamPraktek = jamField.getText().trim();
             String newNoTelpDokter = notelpField.getText().trim();
 
-            // Validasi input kosong
             if (newNamaDokter.isEmpty() || newJamPraktek.isEmpty() || newNoTelpDokter.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Semua field harus diisi!");
                 return;
             }
 
-            // Validasi format no telp (harus angka)
+            // validasi format no telp (harus angka)
             if (!newNoTelpDokter.matches("\\d+")) {
                 JOptionPane.showMessageDialog(this, "Nomor telepon harus berupa angka!");
                 return;
             }
 
-            // Konfirmasi update
+            // konfirm update
             int konfirmasi = JOptionPane.showConfirmDialog(this,
                 "Apakah Anda yakin ingin mengupdate data dokter ini?",
                 "Konfirmasi Update",
@@ -306,7 +288,7 @@ private void loadDataToTable() {
         if (selectedRow != -1) {
             int idDokter = (int) tabel_dokter.getValueAt(selectedRow, 0);
             
-            // Konfirmasi penghapusan
+            // konfirm hapus
             int confirm = JOptionPane.showConfirmDialog(this,
                 "Apakah Anda yakin ingin menghapus data dokter ini?",
                 "Konfirmasi Hapus",

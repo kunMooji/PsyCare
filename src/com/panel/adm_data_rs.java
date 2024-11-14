@@ -15,31 +15,26 @@ public class adm_data_rs extends javax.swing.JPanel {
 
      private Connection connection;
 
-    // Konstruktor
     public adm_data_rs() {
         initComponents();
         try {
-            // Inisialisasi koneksi menggunakan class konek
-            connection = konek.GetConnection();  // Menggunakan koneksi dari class konek
+            connection = konek.GetConnection();
             loadDataToTable();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Koneksi ke database gagal: " + e.getMessage());
         }
     }
 
-    // Memuat data rumah sakit ke dalam tabel
     private void loadDataToTable() {
         try {
-            // Query untuk mengambil data rumah sakit
+     
             String query = "SELECT id_rs, nama_rs, alamat, latitude, longitude FROM rumah_sakit";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
-            // Membuat model tabel untuk JTable
             DefaultTableModel model = new DefaultTableModel(new String[] {
                 "ID RS", "Nama RS", "Alamat", "Latitude", "Longitude" }, 0);
 
-            // Menambahkan data hasil query ke dalam tabel
             while (rs.next()) {
                 int idRs = rs.getInt("id_rs");
                 String namaRs = rs.getString("nama_rs");
@@ -47,11 +42,9 @@ public class adm_data_rs extends javax.swing.JPanel {
                 double latitude = rs.getDouble("latitude");
                 double longitude = rs.getDouble("longitude");
 
-                // Menambahkan data ke model
                 model.addRow(new Object[] { idRs, namaRs, alamat, latitude, longitude });
             }
-
-            // Set model tabel untuk JTable
+            
             tabel_rs.setModel(model);
 
         } catch (SQLException e) {
@@ -188,14 +181,13 @@ public class adm_data_rs extends javax.swing.JPanel {
     private void update_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_update_btnActionPerformed
   int selectedRow = tabel_rs.getSelectedRow();
     if (selectedRow != -1) {
-        // Get data from selected row
+
         int idRs = (int) tabel_rs.getValueAt(selectedRow, 0);
         String namaRs = (String) tabel_rs.getValueAt(selectedRow, 1);
         String alamat = (String) tabel_rs.getValueAt(selectedRow, 2);
         double latitude = (double) tabel_rs.getValueAt(selectedRow, 3);
         double longitude = (double) tabel_rs.getValueAt(selectedRow, 4);
 
-        // Create input dialog
         JPanel panel = new JPanel(new GridLayout(4, 2));
         JTextField namaField = new JTextField(namaRs);
         JTextField alamatField = new JTextField(alamat);
@@ -216,7 +208,7 @@ public class adm_data_rs extends javax.swing.JPanel {
 
         if (result == JOptionPane.OK_OPTION) {
             try {
-                // Validate inputs
+
                 String newNama = namaField.getText().trim();
                 String newAlamat = alamatField.getText().trim();
                 double newLat = Double.parseDouble(latField.getText().trim());
@@ -227,7 +219,7 @@ public class adm_data_rs extends javax.swing.JPanel {
                     return;
                 }
 
-                // Update database
+
                 String query = "UPDATE rumah_sakit SET nama_rs = ?, alamat = ?, latitude = ?, longitude = ? WHERE id_rs = ?";
                 PreparedStatement pst = connection.prepareStatement(query);
                 pst.setString(1, newNama);
@@ -254,7 +246,7 @@ public class adm_data_rs extends javax.swing.JPanel {
     }//GEN-LAST:event_update_btnActionPerformed
 
     private void tambah_rs_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tambah_rs_btnActionPerformed
-         // Create input dialog
+
     JPanel panel = new JPanel(new GridLayout(4, 2));
     JTextField namaField = new JTextField();
     JTextField alamatField = new JTextField();
@@ -275,7 +267,7 @@ public class adm_data_rs extends javax.swing.JPanel {
 
     if (result == JOptionPane.OK_OPTION) {
         try {
-            // Validate inputs
+
             String nama = namaField.getText().trim();
             String alamat = alamatField.getText().trim();
             String latText = latField.getText().trim();
@@ -289,7 +281,6 @@ public class adm_data_rs extends javax.swing.JPanel {
             double latitude = Double.parseDouble(latText);
             double longitude = Double.parseDouble(longText);
 
-            // Insert into database
             String query = "INSERT INTO rumah_sakit (nama_rs, alamat, latitude, longitude) VALUES (?, ?, ?, ?)";
             PreparedStatement pst = connection.prepareStatement(query);
             pst.setString(1, nama);
@@ -300,7 +291,7 @@ public class adm_data_rs extends javax.swing.JPanel {
             int rowsAffected = pst.executeUpdate();
             if (rowsAffected > 0) {
                 JOptionPane.showMessageDialog(this, "Data berhasil ditambahkan!");
-                loadDataToTable(); // Refresh table
+                loadDataToTable(); 
             }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Latitude dan Longitude harus berupa angka!");

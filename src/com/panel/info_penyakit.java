@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package com.panel;
 
 
@@ -15,7 +11,7 @@ public class info_penyakit extends javax.swing.JPanel {
 
       private Connection connection;
     private JPanel cardPanel;
-    private ArrayList<PenyakitData> penyakitList;
+    private ArrayList<PenyakitData> penyakitList; //ini buat nyimpen data penyakit
 
 
     private class PenyakitData {
@@ -27,7 +23,6 @@ public class info_penyakit extends javax.swing.JPanel {
             this.deskripsi = deskripsi;
         }
     }
-
     public info_penyakit() {
         initComponents();
         setupUI();
@@ -48,11 +43,9 @@ public class info_penyakit extends javax.swing.JPanel {
         titleLabel.setForeground(new Color(51, 51, 51));
         titlePanel.add(titleLabel);
 
-        // Wrapper panel untuk mengatur lebar maksimum
         JPanel wrapperPanel = new JPanel(new BorderLayout());
         wrapperPanel.setBackground(new Color(255, 255, 255));
-
-        // Panel untuk cards dengan GridLayout
+    
         cardPanel = new JPanel() {
             @Override
             public Dimension getPreferredSize() {
@@ -65,17 +58,15 @@ public class info_penyakit extends javax.swing.JPanel {
         cardPanel.setBackground(new Color(255, 255, 255));
         cardPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // ScrollPane dengan policy yang tepat
+        // scrollpane
         JScrollPane scrollPane = new JScrollPane(cardPanel);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         
-        // Tambahkan scrollPane ke wrapper
         wrapperPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Tambahkan panels ke frame
         add(titlePanel, BorderLayout.NORTH);
         add(wrapperPanel, BorderLayout.CENTER);
 
@@ -87,7 +78,8 @@ public class info_penyakit extends javax.swing.JPanel {
         }
     }
 
-    private void loadPenyakitData() {
+    //ini fungsi buat ngambil data dari database pake query select 
+    private void loadPenyakitData() { 
         penyakitList = new ArrayList<>();
         try {
             String query = "SELECT id_penyakit, nama_penyakit, deskripsi FROM penyakit";
@@ -100,6 +92,7 @@ public class info_penyakit extends javax.swing.JPanel {
                     rs.getString("nama_penyakit"),
                     rs.getString("deskripsi")
                 );
+                //ini buat nampilin data penyakit sbg card di ui nya
                 penyakitList.add(penyakit);
                 addPenyakitCard(penyakit);
             }
@@ -110,7 +103,7 @@ public class info_penyakit extends javax.swing.JPanel {
     }
 
     private void addPenyakitCard(PenyakitData penyakit) {
-        // Buat panel untuk setiap penyakit
+        // panel buat naruh penyakit2 nya
         JPanel card = new JPanel();
         card.setLayout(new BorderLayout(10, 10));
         card.setBackground(Color.WHITE);
@@ -119,27 +112,22 @@ public class info_penyakit extends javax.swing.JPanel {
             BorderFactory.createEmptyBorder(15, 15, 15, 15)
         ));
 
-        // Panel untuk icon dan nama
+        // header buat naruh nama penyakit 
         JPanel headerPanel = new JPanel(new BorderLayout(10, 0));
         headerPanel.setOpaque(false);
         
-        // Icon penyakit
-        JLabel iconLabel = new JLabel("🧠"); // Brain emoji
-        iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 32));
-        headerPanel.add(iconLabel, BorderLayout.WEST);
-
-        // Nama penyakit
+        // jlabel ini keisi sama nama penyakit
         JLabel nameLabel = new JLabel(penyakit.nama);
         nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         headerPanel.add(nameLabel, BorderLayout.CENTER);
 
-        // ID penyakit (kecil dan abu-abu)
+        // id ini ajane ga pati perlu ko
         JLabel idLabel = new JLabel("ID: " + penyakit.id);
         idLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         idLabel.setForeground(new Color(128, 128, 128));
         headerPanel.add(idLabel, BorderLayout.EAST);
 
-        // Panel untuk deskripsi dengan scroll
+        // panel buat deskripsi dari penyakit e ntar
         JTextArea descArea = new JTextArea(penyakit.deskripsi);
         descArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         descArea.setLineWrap(true);
@@ -152,18 +140,15 @@ public class info_penyakit extends javax.swing.JPanel {
         descScroll.setBorder(BorderFactory.createLineBorder(new Color(240, 240, 240)));
         descScroll.setPreferredSize(new Dimension(0, 120));
 
-        // Panel untuk selengkapnya button
+        // selengkapnya
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.setOpaque(false);
 
-
-
-        // Tambahkan semua komponen ke card
         card.add(headerPanel, BorderLayout.NORTH);
         card.add(descScroll, BorderLayout.CENTER);
         card.add(buttonPanel, BorderLayout.SOUTH);
 
-        // Tambahkan card ke panel utama
+        //nge add / manggil card ini ke panel utamanya
         cardPanel.add(card);
     }
     @SuppressWarnings("unchecked")

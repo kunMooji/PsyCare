@@ -40,18 +40,17 @@ public class registrasi extends javax.swing.JFrame {
         SelectedDate selectedDate = dateChooser.getSelectedDate();
         if (selectedDate != null) {
             try {
-                // Mendapatkan tanggal dalam format dd-MM-yyyy
+
                 String inputTanggal = selectedDate.getDay() + "-" + 
                                     selectedDate.getMonth() + "-" + 
                                     selectedDate.getYear();
-                // Mengonversi ke format yyyy-MM-dd
+                
                 SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy");
                 SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
                 
                 Date date = inputFormat.parse(inputTanggal);
                 String formattedDate = outputFormat.format(date);
 
-                // Menampilkan tanggal yang diformat di tanggal_lahir_txt
                 tanggal_lahir_txt.setText(formattedDate);
 
             } catch (ParseException e) {
@@ -208,10 +207,27 @@ public class registrasi extends javax.swing.JFrame {
     String repassword = new String(repassword_txt.getPassword());
     String role = (String) jComboBoxrole.getSelectedItem();
     String noTelpon = fullname_txt2.getText();
-    String tanggalLahir = tanggal_lahir_txt.getText(); 
+    String inputTanggal = tanggal_lahir_txt.getText();
+    String formattedDate = "";
 
+    // Validate password match
     if (!password.equals(repassword)) {
         JOptionPane.showMessageDialog(this, "Password dan Re-password tidak cocok!");
+        return;
+    }
+
+    // Format the date
+    try {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = inputFormat.parse(inputTanggal);
+        formattedDate = outputFormat.format(date);
+    } catch (ParseException e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, 
+            "Format tanggal tidak valid. Gunakan format dd-MM-yyyy",
+            "Error Format Tanggal",
+            JOptionPane.ERROR_MESSAGE);
         return;
     }
 
@@ -227,7 +243,7 @@ public class registrasi extends javax.swing.JFrame {
         stmt.setString(4, role);
         stmt.setString(5, noTelpon);
         stmt.setString(6, fullname);
-        stmt.setString(7, tanggalLahir);
+        stmt.setString(7, formattedDate); 
         
         int rowsInserted = stmt.executeUpdate();
 
@@ -240,7 +256,6 @@ public class registrasi extends javax.swing.JFrame {
         e.printStackTrace();
         JOptionPane.showMessageDialog(this, "Terjadi kesalahan saat registrasi. Coba lagi.");
     }
-
 
     }//GEN-LAST:event_regis_btnActionPerformed
 

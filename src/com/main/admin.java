@@ -1,12 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package com.main;
 
 import static com.main.user.mainPanel;
 import com.panel.adm_data_rs;
-import com.panel.dashboard;
+import com.panel.dashboard_user;
 import com.panel.info_penyakit;
 import com.panel.rs_terdekat;
 import com.panel.adm_data_dokter;
@@ -20,27 +17,24 @@ import java.awt.event.MouseEvent;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
-/**
- *
- * @author hilmi
- */
 public class admin extends javax.swing.JFrame {
 
-    private dashboard main;
+    private dashboard_user main;
     private info_penyakit infoPenyakit;
     private adm_data_rs DataRs;
     private adm_data_dokter DataDokter;
  
     public admin() {
-           initComponents();
-    init();  // Panggil metode init() untuk menginisialisasi panel
+    initComponents();
+    init(); 
     setLocationRelativeTo(null);
     setBackground(new Color(0, 0, 0, 0));
     tampilan1.event(this, background1);
     }
 
      public void init(){
-        main = new dashboard();
+         //ini buat inisialisasi / deklarasi panel2 yg akan di pake
+     main = new dashboard_user();
      mainPanel.setLayout(new BorderLayout());
      mainPanel.add(main);
      DataRs = new adm_data_rs();
@@ -52,24 +46,26 @@ public class admin extends javax.swing.JFrame {
 
     }
     public void showForm(Component com){
+        //ini method buat nampilin panel dengan cara ngeremove dulu
         mainPanel.removeAll();
         mainPanel.add(com);
         mainPanel.repaint();
         mainPanel.revalidate();
     }
+    
+    //ini biar ad animasinya
     private void addHoverAnimation(JLabel label) {
-        // Store original size and color
-        final int ANIMATION_DURATION = 150; // milliseconds
-        final int ANIMATION_STEPS = 15;
-        final int GROW_SIZE = 10; // pixels to grow
+        final int DURASI_ANIMASI = 150; 
+        final int PERUBAHAN_ANIMASI = 15;
+        final int GROW_SIZE = 10; 
 
-        final int originalWidth = label.getWidth();
-        final int originalHeight = label.getHeight();
-        final Color originalColor = label.getForeground();
-        final Color hoverColor = new Color(65, 105, 225); // Royal Blue
+        final int lebar_awal = label.getWidth();
+        final int tinggi_awal = label.getHeight();
+        final Color warna_ori = label.getForeground();
+        final Color hoverColor = new Color(65, 105, 225);
 
-        Timer growTimer = new Timer(ANIMATION_DURATION / ANIMATION_STEPS, null);
-        Timer shrinkTimer = new Timer(ANIMATION_DURATION / ANIMATION_STEPS, null);
+        Timer growTimer = new Timer(DURASI_ANIMASI / PERUBAHAN_ANIMASI, null);
+        Timer shrinkTimer = new Timer(DURASI_ANIMASI / PERUBAHAN_ANIMASI, null);
 
         growTimer.addActionListener(new ActionListener() {
             int step = 0;
@@ -77,15 +73,14 @@ public class admin extends javax.swing.JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 step++;
-                float progress = (float) step / ANIMATION_STEPS;
+                float progress = (float) step / PERUBAHAN_ANIMASI;
 
-                // Smooth size transition
-                int newWidth = originalWidth + (int)(GROW_SIZE * progress);
-                int newHeight = originalHeight + (int)(GROW_SIZE * progress);
+                int newWidth = lebar_awal + (int)(GROW_SIZE * progress);
+                int newHeight = tinggi_awal + (int)(GROW_SIZE * progress);
 
                 label.setSize(newWidth, newHeight);
 
-                if (step >= ANIMATION_STEPS) {
+                if (step >= PERUBAHAN_ANIMASI) {
                     step = 0;
                     growTimer.stop();
                 }
@@ -98,17 +93,16 @@ public class admin extends javax.swing.JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 step++;
-                float progress = (float) step / ANIMATION_STEPS;
+                float progress = (float) step / PERUBAHAN_ANIMASI;
 
-                // Smooth size transition
-                int newWidth = originalWidth + GROW_SIZE - (int)(GROW_SIZE * progress);
-                int newHeight = originalHeight + GROW_SIZE - (int)(GROW_SIZE * progress);
+                int newWidth = lebar_awal + GROW_SIZE - (int)(GROW_SIZE * progress);
+                int newHeight = tinggi_awal + GROW_SIZE - (int)(GROW_SIZE * progress);
 
 
                 label.setSize(newWidth, newHeight);
 
 
-                if (step >= ANIMATION_STEPS) {
+                if (step >= PERUBAHAN_ANIMASI) {
                     step = 0;
                     shrinkTimer.stop();
                 }

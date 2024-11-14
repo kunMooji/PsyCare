@@ -26,7 +26,7 @@ public class rs_terdekat extends javax.swing.JPanel {
     }
 
     private void loadKecamatanData() {
-        // Fetching Kecamatan data and coordinates
+
         String query = "SELECT id_kecamatan, nama_kecamatan, latitude, longitude FROM kecamatan";
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
             ArrayList<double[]> coordinatesList = new ArrayList<>();
@@ -42,13 +42,13 @@ public class rs_terdekat extends javax.swing.JPanel {
     }
 
     private void loadData() {
-        // Create table model with columns: Nama Rumah Sakit, Alamat, Jarak
+       
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("Nama Rumah Sakit");
         model.addColumn("Alamat");
         model.addColumn("Jarak");
 
-        // Get selected kecamatan index
+        // get selected index kecamatan
         int kecamatanIndex = jComboBoxKecamatan.getSelectedIndex();
         if (kecamatanIndex == -1) {
             JOptionPane.showMessageDialog(this, "Silakan pilih kecamatan");
@@ -57,7 +57,7 @@ public class rs_terdekat extends javax.swing.JPanel {
         double latKecamatan = kordinatKecamatan[kecamatanIndex][0];
         double lonKecamatan = kordinatKecamatan[kecamatanIndex][1];
 
-        // Fetch hospitals from the database
+     
         ArrayList<RumahSakit> hospitals = new ArrayList<>();
         String query = "SELECT nama_rs, alamat, latitude, longitude FROM rumah_sakit";
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
@@ -67,7 +67,6 @@ public class rs_terdekat extends javax.swing.JPanel {
                 double latRS = rs.getDouble("latitude");
                 double lonRS = rs.getDouble("longitude");
 
-                // Calculate the distance using Haversine formula
                 double distance = haversine(latKecamatan, lonKecamatan, latRS, lonRS);
                 hospitals.add(new RumahSakit(name, address, distance));
             }
@@ -82,12 +81,11 @@ public class rs_terdekat extends javax.swing.JPanel {
             }
         });
 
-        // Add hospital data to the table model
+ 
         for (RumahSakit hospital : hospitals) {
             model.addRow(new Object[]{hospital.getNama(), hospital.getAlamatRS(), String.format("%.2f km", hospital.getJarak())});
         }
 
-        // Set model to the table
         tabel_rs.setModel(model);
     }
 
@@ -102,7 +100,6 @@ public class rs_terdekat extends javax.swing.JPanel {
         return R * c;
     }
 
-    // Inner class to represent Hospital data
     class RumahSakit {
         private String nama;
         private String alamatRS;

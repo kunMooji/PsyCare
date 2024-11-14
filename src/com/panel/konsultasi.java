@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package com.panel;
 
 import koneksi.konek;
@@ -35,25 +31,21 @@ public class konsultasi extends javax.swing.JPanel {
         loadDokterData();
     }
 
-    private void openWhatsApp(String phoneNumber) {
+    private void openWhatsApp(String notelp) {
         try {
-            // Remove any non-numeric characters from phone number
-            String cleanNumber = phoneNumber.replaceAll("[^0-9]", "");
+            String cleanNumber = notelp.replaceAll("[^0-9]", "");
             
-            // If number doesn't start with country code, add Indonesia's code (62)
             if (!cleanNumber.startsWith("62") && cleanNumber.startsWith("0")) {
                 cleanNumber = "62" + cleanNumber.substring(1);
             }
             
-            // Create WhatsApp URL
             String url = "https://wa.me/" + cleanNumber;
             
-            // Open URL in default browser
             Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, 
-                "Error opening WhatsApp: " + e.getMessage(),
-                "Error",
+                "error membuka whatsapp: " + e.getMessage(),
+                "error",
                 JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -62,7 +54,6 @@ public class konsultasi extends javax.swing.JPanel {
         setLayout(new BorderLayout());
         setBackground(new Color(245, 245, 245));
 
-        // Panel untuk judul
         JPanel titlePanel = new JPanel();
         titlePanel.setBackground(new Color(255, 255, 255));
         titlePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));

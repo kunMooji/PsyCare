@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package com.main;
 import koneksi.konek;
 import java.sql.Connection;
@@ -18,13 +15,18 @@ public class edit_rs extends javax.swing.JFrame {
     }
 
     // Method to update hospital data
-    public void showHospitalDetails(String hospitalName) {
+    public void LoadRSData(String rumahsakitNama) {
         Connection conn = null;
         try {
             conn = konek.GetConnection();
+            //select * buat nampilin semua data yang ada di tabel rumah_sakit
+            //where rs adalah sbg acuan buat nampilinnya
+            //misal SELECT * FROM rumah_sakit WHERE nama_rs = bina sehat
+            //maka yang muncul adalah semua data dari bina sehat
+            
             String query = "SELECT * FROM rumah_sakit WHERE nama_rs = ?";
             PreparedStatement pst = conn.prepareStatement(query);
-            pst.setString(1, hospitalName);
+            pst.setString(1, rumahsakitNama);
 
             ResultSet rs = pst.executeQuery();
             if (rs.next()) {
@@ -46,36 +48,36 @@ public class edit_rs extends javax.swing.JFrame {
             }
         }
     }
- private void updateHospitalData(String nama, String alamat, String latitude, String longitude) {
+ private void updateDataRs(String nama, String alamat, String latitude, String longitude) {
     Connection conn = null;
     try {
         conn = konek.GetConnection();
 
-        // SQL Query Update
+        // query update nya
         String query = "UPDATE rumah_sakit SET nama_rs = ?, alamat = ?, latitude = ?, longitude = ? WHERE nama_rs = ?";
         PreparedStatement pst = conn.prepareStatement(query);
-        pst.setString(1, nama); // New name
-        pst.setString(2, alamat); // New address
-        pst.setString(3, latitude); // New latitude
-        pst.setString(4, longitude); // New longitude
+        pst.setString(1, nama);
+        pst.setString(2, alamat); 
+        pst.setString(3, latitude);
+        pst.setString(4, longitude);
 
         int rowsUpdated = pst.executeUpdate();
 
         if (rowsUpdated > 0) {
             JOptionPane.showMessageDialog(this, "Data rumah sakit berhasil diperbarui!");
-            this.dispose();  // Menutup form setelah update
+            this.dispose();//nutup frame update kalo udh kelar
         } else {
             JOptionPane.showMessageDialog(this, "Gagal memperbarui data rumah sakit!");
         }
     } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this, "Error updating data: " + e.getMessage());
+        JOptionPane.showMessageDialog(this, "error update data: " + e.getMessage());
     } finally {
         try {
             if (conn != null && !conn.isClosed()) {
                 conn.close();
             }
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error closing connection: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "error saat menutup koneksi " + e.getMessage());
         }
     }
 }
@@ -84,19 +86,25 @@ public class edit_rs extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        nama_new = new javax.swing.JTextField();
-        alamat_new = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        nama_new = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
+        alamat_new = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        longitude = new javax.swing.JTextField();
         latitute = new javax.swing.JTextField();
-        simpan_upd_btn = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        longitude = new javax.swing.JTextField();
         cancel_btn = new javax.swing.JButton();
+        simpan_upd_btn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel1.setText("nama rumah sakit");
 
         nama_new.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -104,23 +112,28 @@ public class edit_rs extends javax.swing.JFrame {
             }
         });
 
+        jLabel3.setText("alamat rumah sakit");
+
         alamat_new.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 alamat_newActionPerformed(evt);
             }
         });
 
-        jLabel1.setText("nama rumah sakit");
-
-        jLabel2.setText("longitude");
-
-        jLabel3.setText("alamat rumah sakit");
-
         jLabel4.setText("latitute");
 
         latitute.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 latituteActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("longitude");
+
+        cancel_btn.setText("cancel");
+        cancel_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancel_btnActionPerformed(evt);
             }
         });
 
@@ -131,62 +144,55 @@ public class edit_rs extends javax.swing.JFrame {
             }
         });
 
-        cancel_btn.setText("cancel");
-        cancel_btn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancel_btnActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(59, 59, 59)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(52, 52, 52)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel3)
-                        .addComponent(jLabel2)
-                        .addComponent(nama_new)
-                        .addComponent(alamat_new)
-                        .addComponent(jLabel4)
-                        .addComponent(longitude)
-                        .addComponent(latitute, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(69, Short.MAX_VALUE)
-                .addComponent(cancel_btn)
-                .addGap(18, 18, 18)
-                .addComponent(simpan_upd_btn)
-                .addGap(59, 59, 59))
+                    .addComponent(nama_new, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(alamat_new, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
+                    .addComponent(latitute, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(longitude, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(cancel_btn)
+                        .addGap(18, 18, 18)
+                        .addComponent(simpan_upd_btn)))
+                .addContainerGap(56, Short.MAX_VALUE))
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(73, 73, 73)
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(68, Short.MAX_VALUE)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(6, 6, 6)
                 .addComponent(nama_new, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(12, 12, 12)
                 .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(6, 6, 6)
                 .addComponent(alamat_new, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(12, 12, 12)
                 .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(6, 6, 6)
                 .addComponent(latitute, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(13, 13, 13)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(longitude, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(simpan_upd_btn)
-                    .addComponent(cancel_btn))
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addComponent(jLabel2)
+                .addGap(6, 6, 6)
+                .addComponent(longitude, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cancel_btn)
+                    .addComponent(simpan_upd_btn))
+                .addGap(46, 46, 46))
         );
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 290, 380));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -254,6 +260,7 @@ public class edit_rs extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField latitute;
     private javax.swing.JTextField longitude;
     private javax.swing.JTextField nama_new;

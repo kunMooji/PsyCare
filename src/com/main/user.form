@@ -120,13 +120,21 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="kawan_konsul" min="-2" pref="170" max="-2" attributes="0"/>
-                              <Component id="info_penyakit" min="-2" pref="170" max="-2" attributes="0"/>
-                              <Component id="rs_terdekat_btn1" min="-2" pref="170" max="-2" attributes="0"/>
-                              <Component id="dashboard_btn" min="-2" pref="170" max="-2" attributes="0"/>
+                              <Group type="102" attributes="0">
+                                  <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="kawan_konsul" min="-2" pref="170" max="-2" attributes="0"/>
+                                      <Component id="info_penyakit" min="-2" pref="170" max="-2" attributes="0"/>
+                                      <Component id="rs_terdekat_btn1" min="-2" pref="170" max="-2" attributes="0"/>
+                                      <Component id="dashboard_btn" min="-2" pref="170" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="75" max="-2" attributes="0"/>
+                                  <Component id="survey_btn" min="-2" pref="72" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
                           <EmptySpace pref="37" max="32767" attributes="0"/>
                       </Group>
@@ -143,6 +151,8 @@
                           <Component id="kawan_konsul" min="-2" pref="63" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
                           <Component id="info_penyakit" min="-2" pref="65" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
+                          <Component id="survey_btn" min="-2" pref="37" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
@@ -199,6 +209,14 @@
                   </Properties>
                   <Events>
                     <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="info_penyakitMouseClicked"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JLabel" name="survey_btn">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="jLabel1"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="survey_btnMouseClicked"/>
                   </Events>
                 </Component>
               </SubComponents>
