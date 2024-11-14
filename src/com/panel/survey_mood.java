@@ -13,25 +13,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class survey_mood extends javax.swing.JPanel {
-    private List<String> pertanyaan = new ArrayList<>();
+    private int userId; // Add this field
+    private List<String> questions = new ArrayList<>();
     private Map<Integer, Integer> answers = new HashMap<>();
-    private int pageSekarang = 0;
-    private static final int PERTANYAAN_PERPAGE = 5;
-    private static final int TOTAL_PERTANYAAN = 10;
+    private int currentPage = 0;
+    private static final int QUESTIONS_PER_PAGE = 5;
+    private static final int TOTAL_QUESTIONS = 10;
     
-    private JPanel panelPertanyaan;
-    private List<buttonGroupJawaban> panelJawaban;
-    private List<JLabel> labelPertanyaan;
+    private JPanel questionsPanel;
+    private List<buttonGroupJawaban> answerPanels;
+    private List<JLabel> questionLabels;
     private JButton nextButton;
     private JButton submitButton;
     private JPanel cardPanel;
     private JPanel buttonPanel;
 
    public survey_mood(int userId) {
+        this.userId = userId;
         initComponents();
         init();
-        loadPertanyaan();
-        tampilkanPertanyaan();
+        loadQuestionsFromDatabase();
+        displayQuestions();
     }
 
     private void init() {
@@ -41,68 +43,68 @@ public class survey_mood extends javax.swing.JPanel {
         cardPanel = new JPanel(new BorderLayout());
         cardPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
 
-        panelPertanyaan = new JPanel();
-        panelPertanyaan.setLayout(new BoxLayout(panelPertanyaan, BoxLayout.Y_AXIS));
-        panelPertanyaan.setBackground(Color.WHITE);
+        questionsPanel = new JPanel();
+        questionsPanel.setLayout(new BoxLayout(questionsPanel, BoxLayout.Y_AXIS));
+        questionsPanel.setBackground(Color.WHITE);
 
-        panelJawaban = new ArrayList<>();
-        labelPertanyaan = new ArrayList<>();
+        answerPanels = new ArrayList<>();
+        questionLabels = new ArrayList<>();
 
-        // panel buat naruh button next
+        // Create button panel
         buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         nextButton = new JButton("Pertanyaan Selanjutnya");
         submitButton = new JButton("Kirim");
         submitButton.setVisible(false);
 
-        nextButton.addActionListener(e -> showPageSelanjutnya());
-        submitButton.addActionListener(e -> hitungSkor());
+        nextButton.addActionListener(e -> showNextPage());
+        submitButton.addActionListener(e -> calculateAndShowScore());
 
         buttonPanel.add(nextButton);
         buttonPanel.add(submitButton);
 
-        JScrollPane scrollPane = new JScrollPane(panelPertanyaan);
+        JScrollPane scrollPane = new JScrollPane(questionsPanel);
         cardPanel.add(scrollPane, BorderLayout.CENTER);
         cardPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         add(cardPanel, BorderLayout.CENTER);
     }
 
-    private void loadPertanyaan() {
+    private void loadQuestionsFromDatabase() {
         try (Connection conn = konek.GetConnection();
              PreparedStatement stmt = conn.prepareStatement("SELECT question_text FROM pertanyaan_survey LIMIT ?")) {
-            stmt.setInt(1, TOTAL_PERTANYAAN);
+            stmt.setInt(1, TOTAL_QUESTIONS);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                pertanyaan.add(rs.getString("question_text"));
+                questions.add(rs.getString("question_text"));
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "gagal menampilkan pertanyaan: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Gagal memuat pertanyaan: " + e.getMessage());
         }
     }
 
-    private void tampilkanPertanyaan() {
-        panelPertanyaan.removeAll();
-        int startIndex = pageSekarang * PERTANYAAN_PERPAGE;
-        int endIndex = Math.min(startIndex + PERTANYAAN_PERPAGE, pertanyaan.size());
+    private void displayQuestions() {
+        questionsPanel.removeAll();
+        int startIndex = currentPage * QUESTIONS_PER_PAGE;
+        int endIndex = Math.min(startIndex + QUESTIONS_PER_PAGE, questions.size());
 
         for (int i = startIndex; i < endIndex; i++) {
-            JPanel containerPertanyaan = new JPanel(new BorderLayout());
-            containerPertanyaan.setBackground(Color.WHITE);
+            JPanel questionContainer = new JPanel(new BorderLayout());
+            questionContainer.setBackground(Color.WHITE);
             
-            JLabel pertanyaanlabel = new JLabel((i + 1) + ". " + pertanyaan.get(i));
-            pertanyaanlabel.setFont(new Font("Arial", Font.BOLD, 14));
-            pertanyaanlabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
+            JLabel questionLabel = new JLabel((i + 1) + ". " + questions.get(i));
+            questionLabel.setFont(new Font("Arial", Font.BOLD, 14));
+            questionLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
             
-            buttonGroupJawaban jawabanPanel = new buttonGroupJawaban();
+            buttonGroupJawaban answerPanel = new buttonGroupJawaban();
             
-            containerPertanyaan.add(pertanyaanlabel, BorderLayout.NORTH);
-            containerPertanyaan.add(jawabanPanel, BorderLayout.CENTER);
+            questionContainer.add(questionLabel, BorderLayout.NORTH);
+            questionContainer.add(answerPanel, BorderLayout.CENTER);
             
-            labelPertanyaan.add(pertanyaanlabel);
-            panelJawaban.add(jawabanPanel);
+            questionLabels.add(questionLabel);
+            answerPanels.add(answerPanel);
             
-            panelPertanyaan.add(containerPertanyaan);
-            panelPertanyaan.add(Box.createRigidArea(new Dimension(0, 20)));
+            questionsPanel.add(questionContainer);
+            questionsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         }
 
         updateButtonVisibility();
@@ -110,49 +112,13 @@ public class survey_mood extends javax.swing.JPanel {
         repaint();
     }
 
-    private void showPageSelanjutnya() {
-        int startIndex = pageSekarang * PERTANYAAN_PERPAGE;
-        int endIndex = Math.min(startIndex + PERTANYAAN_PERPAGE, pertanyaan.size());
-        
-        boolean diisi_semua = true;
-        for (int i = 0; i < (endIndex - startIndex); i++) {
-            buttonGroupJawaban panel = panelJawaban.get(i);
-            if (panel.getSelectedValue() == -1) {
-                diisi_semua = false;
-                break;
-            }
-            answers.put(startIndex + i, panel.getSelectedValue());
-        }
-
-        if (!diisi_semua) {
-            JOptionPane.showMessageDialog(this, "silakan jawab semua pertanyaan terlebih dahulu.");
-            return;
-        }
-
-        panelJawaban.clear();
-        labelPertanyaan.clear();
-        pageSekarang++;
-        tampilkanPertanyaan();
-    }
-
-    private void updateButtonVisibility() {
-        int totalPages = (int) Math.ceil(pertanyaan.size() / (double) PERTANYAAN_PERPAGE);
-        if (pageSekarang == totalPages - 1) {
-            nextButton.setVisible(false);
-            submitButton.setVisible(true);
-        } else {
-            nextButton.setVisible(true);
-            submitButton.setVisible(false);
-        }
-    }
-
-  private void hitungSkor() {
-        int startIndex = pageSekarang * PERTANYAAN_PERPAGE;
-        int endIndex = Math.min(startIndex + PERTANYAAN_PERPAGE, pertanyaan.size());
+    private void showNextPage() {
+        int startIndex = currentPage * QUESTIONS_PER_PAGE;
+        int endIndex = Math.min(startIndex + QUESTIONS_PER_PAGE, questions.size());
         
         boolean allAnswered = true;
         for (int i = 0; i < (endIndex - startIndex); i++) {
-            buttonGroupJawaban panel = panelJawaban.get(i);
+            buttonGroupJawaban panel = answerPanels.get(i);
             if (panel.getSelectedValue() == -1) {
                 allAnswered = false;
                 break;
@@ -165,37 +131,68 @@ public class survey_mood extends javax.swing.JPanel {
             return;
         }
 
+        answerPanels.clear();
+        questionLabels.clear();
+        currentPage++;
+        displayQuestions();
+    }
+
+    private void updateButtonVisibility() {
+        int totalPages = (int) Math.ceil(questions.size() / (double) QUESTIONS_PER_PAGE);
+        if (currentPage == totalPages - 1) {
+            nextButton.setVisible(false);
+            submitButton.setVisible(true);
+        } else {
+            nextButton.setVisible(true);
+            submitButton.setVisible(false);
+        }
+    }
+
+    private void calculateAndShowScore() {
+
+        int startIndex = currentPage * QUESTIONS_PER_PAGE;
+        int endIndex = Math.min(startIndex + QUESTIONS_PER_PAGE, questions.size());
+        
+        for (int i = 0; i < (endIndex - startIndex); i++) {
+            buttonGroupJawaban panel = answerPanels.get(i);
+            if (panel.getSelectedValue() != -1) {
+                answers.put(startIndex + i, panel.getSelectedValue());
+            }
+        }
+
         int totalScore = 0;
         for (Integer answer : answers.values()) {
-            totalScore += answer;
+            switch (answer) {
+                case 0: 
+                    totalScore += 2;
+                    break;
+                case 1: 
+                    totalScore += 4;
+                    break;
+                case 2: 
+                    totalScore += 6;
+                    break;
+                case 3: // Baik
+                    totalScore += 8;
+                    break;
+                case 4: // Sangat Baik
+                    totalScore += 10;
+                    break;
+            }
         }
 
         double averageScore = (double) totalScore / answers.size();
-        
-        String category;
-        if (averageScore >= 9) {
-            category = "Sangat Baik";
-        } else if (averageScore >= 7) {
-            category = "Baik";
-        } else if (averageScore >= 5) {
-            category = "Cukup Baik";
-        } else if (averageScore >= 3) {
-            category = "Kurang Baik";
-        } else {
-            category = "Buruk";
-        }
-
-        String result = String.format("Hasil Survey:\nNilai Rata-rata: %.2f\nKategori: %s", 
-                                    averageScore, category);
+        String result = String.format("Total Nilai: %.2f", averageScore);
         JOptionPane.showMessageDialog(this, result);
         
-        saveJawaban(totalScore, averageScore);
+        saveResults(totalScore, averageScore);
     }
- private void saveJawaban(int totalScore, double averageScore) {
+ private void saveResults(int totalScore, double averageScore) {
         try (Connection conn = konek.GetConnection();
              PreparedStatement stmt = conn.prepareStatement(
                 "INSERT INTO hasil_survey (result_id, average_score, survey_date) VALUES (?, ?, NOW())")) {
-           
+            
+            stmt.setInt(1, userId);
             stmt.setDouble(2, averageScore);
             
             stmt.executeUpdate();

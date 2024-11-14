@@ -114,7 +114,9 @@ public class user extends javax.swing.JFrame {
                 int newWidth = originalWidth + GROW_SIZE - (int)(GROW_SIZE * progress);
                 int newHeight = originalHeight + GROW_SIZE - (int)(GROW_SIZE * progress);
 
+
                 label.setSize(newWidth, newHeight);
+
 
                 if (step >= ANIMATION_STEPS) {
                     step = 0;
