@@ -7,6 +7,8 @@ import com.panel.dashboard_user;
 import com.panel.info_penyakit;
 import com.panel.rs_terdekat;
 import com.panel.adm_data_dokter;
+import com.panel.adm_data_penyakit;
+import com.panel.dashboard_admin;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -19,10 +21,11 @@ import javax.swing.Timer;
 
 public class admin extends javax.swing.JFrame {
 
-    private dashboard_user main;
+   private dashboard_admin main;
     private info_penyakit infoPenyakit;
     private adm_data_rs DataRs;
     private adm_data_dokter DataDokter;
+    private adm_data_penyakit DataPenyakit;
  
     public admin() {
     initComponents();
@@ -34,15 +37,17 @@ public class admin extends javax.swing.JFrame {
 
      public void init(){
          //ini buat inisialisasi / deklarasi panel2 yg akan di pake
-     main = new dashboard_user();
+     main = new dashboard_admin();
      mainPanel.setLayout(new BorderLayout());
      mainPanel.add(main);
      DataRs = new adm_data_rs();
      DataDokter = new adm_data_dokter();
+     DataPenyakit = new adm_data_penyakit();
      
      addHoverAnimation(dashboard_btn);
      addHoverAnimation(dataDokter);
      addHoverAnimation(data_rs);
+     addHoverAnimation(dataPenyakit);
 
     }
     public void showForm(Component com){
@@ -136,6 +141,7 @@ public class admin extends javax.swing.JFrame {
         dataDokter = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        dataPenyakit = new javax.swing.JLabel();
         Header = new javax.swing.JPanel();
         tampilan1 = new com.button.Tampilan();
 
@@ -185,6 +191,14 @@ public class admin extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Verdana", 1, 24)); // NOI18N
         jLabel2.setText("PsyCare App");
 
+        dataPenyakit.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        dataPenyakit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/picture/data_penyakit.png"))); // NOI18N
+        dataPenyakit.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                dataPenyakitMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout shape41Layout = new javax.swing.GroupLayout(shape41);
         shape41.setLayout(shape41Layout);
         shape41Layout.setHorizontalGroup(
@@ -197,7 +211,8 @@ public class admin extends javax.swing.JFrame {
                             .addComponent(dashboard_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(dataDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(data_rs, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dataPenyakit)))
                     .addGroup(shape41Layout.createSequentialGroup()
                         .addGap(77, 77, 77)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -216,6 +231,8 @@ public class admin extends javax.swing.JFrame {
                 .addComponent(data_rs, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(40, 40, 40)
                 .addComponent(dataDokter)
+                .addGap(32, 32, 32)
+                .addComponent(dataPenyakit, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -308,6 +325,10 @@ public class admin extends javax.swing.JFrame {
         showForm(DataDokter);
     }//GEN-LAST:event_dataDokterMouseClicked
 
+    private void dataPenyakitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dataPenyakitMouseClicked
+        showForm(DataPenyakit);
+    }//GEN-LAST:event_dataPenyakitMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -350,6 +371,7 @@ public class admin extends javax.swing.JFrame {
     private com.swing.background background1;
     private javax.swing.JLabel dashboard_btn;
     private javax.swing.JLabel dataDokter;
+    private javax.swing.JLabel dataPenyakit;
     private javax.swing.JLabel data_rs;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

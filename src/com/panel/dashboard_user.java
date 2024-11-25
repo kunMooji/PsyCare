@@ -1,17 +1,109 @@
 package com.panel;
 
-import koneksi.konek;
+import java.awt.BorderLayout;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import koneksi.konek;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.general.DefaultPieDataset;
 
 public class dashboard_user extends javax.swing.JPanel {
 
     public dashboard_user() {
         initComponents();
         loadDataSurvey();
+         addPieChart();
     }
 
+    
+    
+    private void addPieChart() {
+        try {
+            // Create dataset from database
+            DefaultPieDataset dataset = createDataset();
+            
+            // Create pie chart
+            JFreeChart pieChart = ChartFactory.createPieChart(
+                    "Distribusi Emosi", // Chart title
+                    dataset,            // Dataset
+                    true,               // Show legend
+                    true,               // Show tooltips
+                    false               // URLs not needed
+            );
+
+            // Add chart to panel
+            ChartPanel chartPanel = new ChartPanel(pieChart);
+            chartPanel.setPreferredSize(new java.awt.Dimension(600, 400));
+            chartPanel.setVisible(true);
+
+            panel_chart.setLayout(new BorderLayout());
+            panel_chart.removeAll(); // Clear existing components
+            panel_chart.add(chartPanel, BorderLayout.CENTER);
+            panel_chart.validate();
+            panel_chart.repaint();
+            
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error creating pie chart: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private DefaultPieDataset createDataset() throws SQLException {
+        DefaultPieDataset dataset = new DefaultPieDataset();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = konek.GetConnection();
+            String query = "SELECT average_score FROM hasil_survey Where id = '0'";
+            stmt = conn.prepareStatement(query);
+            rs = stmt.executeQuery();
+            
+            int sadCount = 0;
+            int angryCount = 0;
+            int neutralCount = 0;
+            int happyCount = 0;
+
+            // Count mood categories
+            while (rs.next()) {
+                double averageScore = rs.getDouble("average_score");
+
+                if (averageScore >= 0 && averageScore <= 2.5) {
+                    sadCount++;
+                } else if (averageScore > 2.5 && averageScore <= 5.0) {
+                    angryCount++;
+                } else if (averageScore > 5.0 && averageScore <= 7.5) {
+                    neutralCount++;
+                } else if (averageScore > 7.5 && averageScore <= 10.0) {
+                    happyCount++;
+                }
+            }
+
+            // Add data to the dataset
+            dataset.setValue("Sedih", sadCount);
+            dataset.setValue("Marah", angryCount);
+            dataset.setValue("Netral", neutralCount);
+            dataset.setValue("Bahagia", happyCount);
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error retrieving mood data: " + e.getMessage());
+            throw e; // Re-throw to be handled by caller
+        } finally {
+            // Close resources in reverse order
+            if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+            if (stmt != null) try { stmt.close(); } catch (SQLException e) { e.printStackTrace(); }
+            if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+        }
+
+        return dataset;
+    }
+    
     private void loadDataSurvey() {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -26,20 +118,20 @@ public class dashboard_user extends javax.swing.JPanel {
             rs = ps.executeQuery();
 
             if (rs.next()) {
-                //int ini soalnya skor rata2 dalam bentuk angka (sbnenrnya bole juga pake double)
-                int skor_rata2 = rs.getInt("average_score");
+                
+                float skor_rata2 = rs.getFloat("average_score");
                 skor_terakhir.setText("Skor terakhir: " + skor_rata2);
                 
                     String mood;
-              if (skor_rata2 >= 90) {
+              if (skor_rata2 >= 9) {
                   mood = "Mood: Sangat Baik";
-              } else if (skor_rata2 >= 70) {
+              } else if (skor_rata2 >= 7) {
                   mood = "Mood: Baik";
-              } else if (skor_rata2 >= 50) {
+              } else if (skor_rata2 >= 5) {
                   mood = "Mood: Cukup Baik";
-              } else if (skor_rata2 >= 30) {
+              } else if (skor_rata2 >= 3) {
                   mood = "Mood: Kurang Baik";
-              } else if (skor_rata2 >= 10) {
+              } else if (skor_rata2 >= 1) {
                   mood = "Mood: Buruk";
               } else {
                   mood = "Mood: Sangat Buruk";
@@ -63,76 +155,50 @@ public class dashboard_user extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         mood_detect = new javax.swing.JLabel();
         skor_terakhir = new javax.swing.JLabel();
+        panel_chart = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel1.setText("dashboard");
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         mood_detect.setText("mood : ?");
+        jPanel1.add(mood_detect, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 16, 90, 20));
 
         skor_terakhir.setText("skor terakhir :  ?");
+        jPanel1.add(skor_terakhir, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(34, 34, 34)
-                .addComponent(mood_detect, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(91, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(37, 37, 37)
-                    .addComponent(skor_terakhir, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(88, Short.MAX_VALUE)))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(63, Short.MAX_VALUE)
-                .addComponent(mood_detect, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(26, 26, 26)
-                    .addComponent(skor_terakhir, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(52, Short.MAX_VALUE)))
-        );
+        panel_chart.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(35, 35, 35)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(168, 168, 168)
-                        .addComponent(jLabel1)))
-                .addContainerGap(723, Short.MAX_VALUE))
+                .addGap(32, 32, 32)
+                .addComponent(panel_chart, javax.swing.GroupLayout.PREFERRED_SIZE, 505, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(343, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(375, Short.MAX_VALUE))
+                .addGap(72, 72, 72)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panel_chart, javax.swing.GroupLayout.PREFERRED_SIZE, 408, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(56, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel mood_detect;
+    private javax.swing.JPanel panel_chart;
     private javax.swing.JLabel skor_terakhir;
     // End of variables declaration//GEN-END:variables
 }

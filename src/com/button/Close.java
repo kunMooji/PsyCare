@@ -8,7 +8,6 @@ import javax.swing.JFrame;
 
 public class Close extends javax.swing.JPanel {
 
-
     public Close() {
         initComponents();
         setOpaque(false);

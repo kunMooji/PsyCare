@@ -19,7 +19,6 @@ import javax.swing.JButton;
 public class registrasi extends javax.swing.JFrame {
     
     private com.raven.datechooser.DateChooser dateChooser;
-
     
     public registrasi() {
         initComponents();
@@ -200,7 +199,7 @@ public class registrasi extends javax.swing.JFrame {
     }//GEN-LAST:event_cancel_btnActionPerformed
 
     private void regis_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regis_btnActionPerformed
-      String fullname = fullname_txt.getText();
+    String fullname = fullname_txt.getText();
     String username = username_txt.getText();
     String email = email_txt.getText();
     String password = new String(password_txt.getPassword());

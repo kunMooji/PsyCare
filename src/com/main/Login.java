@@ -26,10 +26,10 @@ public class Login extends javax.swing.JFrame {
         username_txt = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        registrasi = new javax.swing.JLabel();
+        registrasi_btn = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        fbutton1 = new com.button.Fbutton();
+        button_login = new com.button.Fbutton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -60,14 +60,14 @@ public class Login extends javax.swing.JFrame {
         jLabel2.setText("password");
         login_container.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 160, -1, -1));
 
-        registrasi.setForeground(new java.awt.Color(51, 102, 255));
-        registrasi.setText("registrasi");
-        registrasi.addMouseListener(new java.awt.event.MouseAdapter() {
+        registrasi_btn.setForeground(new java.awt.Color(51, 102, 255));
+        registrasi_btn.setText("registrasi");
+        registrasi_btn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                registrasiMouseClicked(evt);
+                registrasi_btnMouseClicked(evt);
             }
         });
-        login_container.add(registrasi, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 330, -1, -1));
+        login_container.add(registrasi_btn, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 330, -1, -1));
 
         jLabel5.setText("belum punya akun? ");
         login_container.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 310, -1, -1));
@@ -75,13 +75,13 @@ public class Login extends javax.swing.JFrame {
         jLabel6.setText("username");
         login_container.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 100, -1, -1));
 
-        fbutton1.setText("login");
-        fbutton1.addActionListener(new java.awt.event.ActionListener() {
+        button_login.setText("login");
+        button_login.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fbutton1ActionPerformed(evt);
+                button_loginActionPerformed(evt);
             }
         });
-        login_container.add(fbutton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 230, 110, 30));
+        login_container.add(button_login, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 230, 110, 30));
 
         background1.add(login_container, new org.netbeans.lib.awtextra.AbsoluteConstraints(445, 63, 331, 373));
 
@@ -90,18 +90,19 @@ public class Login extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void registrasiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_registrasiMouseClicked
+    private void registrasi_btnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_registrasi_btnMouseClicked
     registrasi registrasiFrame = new registrasi();
     this.dispose(); //nutup frame this(yg sedang muncul saat ini)
     registrasiFrame.setVisible(true); //terus di ganti sama registrasiFrame
-    }//GEN-LAST:event_registrasiMouseClicked
+    }//GEN-LAST:event_registrasi_btnMouseClicked
 
-    private void fbutton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fbutton1ActionPerformed
-      String username = username_txt.getText();
+    private void button_loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_loginActionPerformed
+    String username = username_txt.getText();
     String password = new String(password_txt.getPassword());
     Connection conn = null;
     PreparedStatement stmt = null;
     ResultSet rs = null;
+    
     try {
         conn = konek.GetConnection();
         //query nyari role berdasarkan username dan password
@@ -152,7 +153,7 @@ public class Login extends javax.swing.JFrame {
         }
     }
 
-    }//GEN-LAST:event_fbutton1ActionPerformed
+    }//GEN-LAST:event_button_loginActionPerformed
 
     /**
      * @param args the command line arguments
@@ -191,8 +192,8 @@ public class Login extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.swing.background background1;
+    private com.button.Fbutton button_login;
     private com.button.Closelogin close11;
-    private com.button.Fbutton fbutton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
@@ -200,7 +201,7 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel login_container;
     private javax.swing.JPasswordField password_txt;
-    private javax.swing.JLabel registrasi;
+    private javax.swing.JLabel registrasi_btn;
     private javax.swing.JTextField username_txt;
     // End of variables declaration//GEN-END:variables
 }

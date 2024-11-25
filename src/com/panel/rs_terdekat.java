@@ -185,7 +185,7 @@ public class rs_terdekat extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jComboBoxKecamatanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxKecamatanActionPerformed
-          loadData();
+        loadData();
     }//GEN-LAST:event_jComboBoxKecamatanActionPerformed
 
 
