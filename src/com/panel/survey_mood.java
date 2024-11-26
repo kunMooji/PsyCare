@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class survey_mood extends javax.swing.JPanel {
-    private int userId; // Add this field
+    private int userId; 
     private List<String> questions = new ArrayList<>();
     private Map<Integer, Integer> answers = new HashMap<>();
     private int currentPage = 0;
@@ -27,6 +27,8 @@ public class survey_mood extends javax.swing.JPanel {
     private JButton submitButton;
     private JPanel cardPanel;
     private JPanel buttonPanel;
+    
+    private int totalScore = 0;
 
    public survey_mood(int userId) {
         this.userId = userId;
@@ -110,6 +112,7 @@ public class survey_mood extends javax.swing.JPanel {
         updateButtonVisibility();
         revalidate();
         repaint();
+        
     }
 
     private void showNextPage() {
@@ -135,6 +138,7 @@ public class survey_mood extends javax.swing.JPanel {
         questionLabels.clear();
         currentPage++;
         displayQuestions();
+        
     }
 
     private void updateButtonVisibility() {
@@ -146,6 +150,7 @@ public class survey_mood extends javax.swing.JPanel {
             nextButton.setVisible(true);
             submitButton.setVisible(false);
         }
+        
     }
 
     private void calculateAndShowScore() {
@@ -160,23 +165,22 @@ public class survey_mood extends javax.swing.JPanel {
             }
         }
 
-        int totalScore = 0;
         for (Integer answer : answers.values()) {
             switch (answer) {
-                case 0: 
-                    totalScore += 2;
-                    break;
-                case 1: 
-                    totalScore += 4;
-                    break;
                 case 2: 
-                    totalScore += 6;
+                    this.totalScore += 2;
                     break;
-                case 3: // Baik
-                    totalScore += 8;
+                case 4: 
+                    this.totalScore += 4;
                     break;
-                case 4: // Sangat Baik
-                    totalScore += 10;
+                case 6: 
+                    this.totalScore += 6;
+                    break;
+                case 8: // Baik
+                    this.totalScore += 8;
+                    break;
+                case 10: // Sangat Baik
+                    this.totalScore += 10;
                     break;
             }
         }
@@ -185,23 +189,23 @@ public class survey_mood extends javax.swing.JPanel {
         String result = String.format("Total Nilai: %.2f", averageScore);
         JOptionPane.showMessageDialog(this, result);
         
-        saveResults(totalScore, averageScore);
+        saveResults(averageScore);
     }
- private void saveResults(int totalScore, double averageScore) {
-        try (Connection conn = konek.GetConnection();
-             PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO hasil_survey (result_id, average_score, survey_date) VALUES (?, ?, NOW())")) {
-            
-            stmt.setInt(1, userId);
-            stmt.setDouble(2, averageScore);
-            
-            stmt.executeUpdate();
-            JOptionPane.showMessageDialog(this, "Hasil survey berhasil disimpan!");
-            
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Gagal menyimpan hasil: " + e.getMessage());
-        }
+private void saveResults(double averageScore) {
+    try (Connection conn = konek.GetConnection();
+         PreparedStatement stmt = conn.prepareStatement(
+         "INSERT INTO hasil_survey (id, average_score, survey_date) VALUES (?, ?, NOW())")) {
+        
+        stmt.setInt(1, userId); // Menggunakan userId sebagai ID pengguna
+        stmt.setDouble(2, averageScore); // Menyimpan skor rata-rata
+        
+        stmt.executeUpdate(); // Menjalankan query
+        JOptionPane.showMessageDialog(this, "Hasil survei berhasil disimpan!");
+        
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Gagal menyimpan hasil: " + e.getMessage());
     }
+}
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

@@ -1,12 +1,15 @@
 
 package com.panel;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -20,15 +23,39 @@ public class adm_data_dokter extends javax.swing.JPanel {
       private Connection connection;
       
     public adm_data_dokter() {
-          initComponents();
+        initComponents();
+
         try {
-            connection = konek.GetConnection(); 
+            connection = konek.GetConnection();
             loadDataToTable();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Koneksi ke database gagal: " + e.getMessage());
         }
+
+        // Atur layout utama
+        setLayout(new BorderLayout());
+
+        // Panel utama dengan padding
+        JPanel containerPanel = new JPanel(new BorderLayout());
+        containerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Padding 20px di semua sisi
+
+        // Tambahkan tabel ke panel utama
+        containerPanel.add(jScrollPane1, BorderLayout.CENTER);
+
+        // Panel untuk tombol
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonPanel.add(delete_btn);
+        buttonPanel.add(update_btn);
+        buttonPanel.add(tambah_dokter);
+
+        // Tambahkan panel tombol ke bagian bawah
+        containerPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        // Tambahkan container panel ke layout utama
+        add(containerPanel, BorderLayout.CENTER);
     }
 
+    
 private void loadDataToTable() {
     try {
         String query = "SELECT id_dokter, nama_dokter, jam_praktek, no_telp FROM dokter";
@@ -62,14 +89,15 @@ private void loadDataToTable() {
 
             if (rowsAffected > 0) {
                 JOptionPane.showMessageDialog(this, "Data dokter berhasil dihapus");
-                loadDataToTable();  // Reload data setelah penghapusan
+                loadDataToTable();
             } else {
                 JOptionPane.showMessageDialog(this, "Data dokter tidak ditemukan");
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error saat menghapus data: " + e.getMessage());
         }
-   }
+      }
+   
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -288,7 +316,6 @@ private void loadDataToTable() {
         if (selectedRow != -1) {
             int idDokter = (int) tabel_dokter.getValueAt(selectedRow, 0);
             
-            // konfirm hapus
             int confirm = JOptionPane.showConfirmDialog(this,
                 "Apakah Anda yakin ingin menghapus data dokter ini?",
                 "Konfirmasi Hapus",

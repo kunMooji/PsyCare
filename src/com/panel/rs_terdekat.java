@@ -14,7 +14,7 @@ public class rs_terdekat extends javax.swing.JPanel {
     private Connection conn;
     private double[][] kordinatKecamatan;
     
-    public rs_terdekat() {
+   public rs_terdekat() {
         initComponents();
         try {
             conn = konek.GetConnection();
@@ -23,6 +23,23 @@ public class rs_terdekat extends javax.swing.JPanel {
         }
         loadKecamatanData();
         loadData();
+
+        setLayout(new java.awt.BorderLayout());
+
+        JPanel containerPanel = new JPanel();
+        containerPanel.setLayout(new java.awt.BorderLayout());
+
+        containerPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        topPanel.add(jLabel2);
+        topPanel.add(jLabel1);
+        topPanel.add(jComboBoxKecamatan);
+
+        containerPanel.add(topPanel, java.awt.BorderLayout.NORTH);
+
+        add(containerPanel, java.awt.BorderLayout.CENTER);
     }
 
     private void loadKecamatanData() {
@@ -88,6 +105,8 @@ public class rs_terdekat extends javax.swing.JPanel {
 
         tabel_rs.setModel(model);
     }
+    
+    
 
     public static double haversine(double lat1, double lon1, double lat2, double lon2) {
         final double R = 6371; // Radius of Earth in kilometers
@@ -164,7 +183,7 @@ public class rs_terdekat extends javax.swing.JPanel {
             }
         ));
         tabel_rs.setFocusTraversalPolicyProvider(true);
-        tabel_rs.setRowHeight(40);
+        tabel_rs.setRowHeight(50);
         tabel_rs.setShowGrid(false);
         tabel_rs.setShowHorizontalLines(true);
         jScrollPane1.setViewportView(tabel_rs);

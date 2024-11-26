@@ -16,15 +16,39 @@ public class adm_data_penyakit extends javax.swing.JPanel {
 
     private Connection connection;
 
-    public adm_data_penyakit() {
-        initComponents();
-             try {
-            connection = konek.GetConnection();
-            loadDataToTable();
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Koneksi ke database gagal: " + e.getMessage());
-        }
-    }
+        public adm_data_penyakit() {
+           initComponents();
+
+           try {
+               connection = konek.GetConnection();
+               loadDataToTable();
+           } catch (SQLException e) {
+               JOptionPane.showMessageDialog(this, "Koneksi ke database gagal: " + e.getMessage());
+           }
+
+           // Mengatur layout untuk mendukung resize
+           setLayout(new java.awt.BorderLayout());
+
+           // Panel utama dengan padding menggunakan EmptyBorder
+           JPanel containerPanel = new JPanel(new java.awt.BorderLayout());
+           containerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Padding 20px di semua sisi
+
+           // Tambahkan tabel ke tengah panel
+           containerPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+           // Panel untuk tombol
+           JPanel buttonPanel = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+           buttonPanel.add(delete_btn);
+           buttonPanel.add(update_btn);
+           buttonPanel.add(tambah_rs_btn);
+
+           containerPanel.add(buttonPanel, java.awt.BorderLayout.SOUTH);
+
+           // Tambahkan container panel ke main panel
+           add(containerPanel, java.awt.BorderLayout.CENTER);
+       }
+
+
     
       private void loadDataToTable() {
         try {
@@ -231,16 +255,16 @@ public class adm_data_penyakit extends javax.swing.JPanel {
 
     private void tambah_rs_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tambah_rs_btnActionPerformed
   JPanel panel = new JPanel(new GridLayout(2, 2));
-JTextField namaField = new JTextField();
-JTextArea deskripsiArea = new JTextArea(5, 20);
-deskripsiArea.setLineWrap(true);
-deskripsiArea.setWrapStyleWord(true);
-JScrollPane scrollPane = new JScrollPane(deskripsiArea);
+    JTextField namaField = new JTextField();
+    JTextArea deskripsiArea = new JTextArea(5, 20);
+    deskripsiArea.setLineWrap(true);
+    deskripsiArea.setWrapStyleWord(true);
+    JScrollPane scrollPane = new JScrollPane(deskripsiArea);
 
-panel.add(new JLabel("Nama Penyakit:"));
-panel.add(namaField);
-panel.add(new JLabel("Deskripsi:"));
-panel.add(scrollPane);
+    panel.add(new JLabel("Nama Penyakit:"));
+    panel.add(namaField);
+    panel.add(new JLabel("Deskripsi:"));
+    panel.add(scrollPane);
 
 int result = JOptionPane.showConfirmDialog(null, panel, "Tambah Data Penyakit",
         JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);

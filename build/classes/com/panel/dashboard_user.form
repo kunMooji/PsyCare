@@ -25,8 +25,8 @@
               <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
               <Component id="panel_chart" min="-2" pref="505" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="jPanel1" min="-2" pref="212" max="-2" attributes="0"/>
-              <EmptySpace pref="343" max="32767" attributes="0"/>
+              <Component id="jPanel1" min="-2" pref="225" max="-2" attributes="0"/>
+              <EmptySpace pref="330" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -35,7 +35,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="72" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jPanel1" min="-2" pref="71" max="-2" attributes="0"/>
+                  <Component id="jPanel1" min="-2" pref="89" max="-2" attributes="0"/>
                   <Component id="panel_chart" min="-2" pref="408" max="-2" attributes="0"/>
               </Group>
               <EmptySpace pref="56" max="32767" attributes="0"/>
@@ -56,7 +56,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="0" y="16" width="90" height="20"/>
+              <AbsoluteConstraints x="0" y="16" width="140" height="20"/>
             </Constraint>
           </Constraints>
         </Component>

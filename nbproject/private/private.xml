@@ -3,23 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/hilmi/Documents/NetBeansProjects/Login/src/com/main/surveyMood.java</file>
-            <file>file:/C:/Users/hilmi/Documents/NetBeansProjects/Login/src/com/panel/dashboard_user.java</file>
-            <file>file:/C:/Users/hilmi/Documents/NetBeansProjects/Login/src/com/raven/datechooser/DateChooser.java</file>
-            <file>file:/C:/Users/hilmi/Documents/NetBeansProjects/Login/src/com/panel/adm_data_rs.java</file>
-            <file>file:/C:/Users/hilmi/Documents/NetBeansProjects/Login/src/com/main/user.java</file>
             <file>file:/C:/Users/hilmi/Documents/NetBeansProjects/Login/src/com/main/admin.java</file>
             <file>file:/C:/Users/hilmi/Documents/NetBeansProjects/Login/src/com/panel/adm_data_dokter.java</file>
-            <file>file:/C:/Users/hilmi/Documents/NetBeansProjects/Login/src/com/button/Close.java</file>
             <file>file:/C:/Users/hilmi/Documents/NetBeansProjects/Login/src/com/panel/rs_terdekat.java</file>
-            <file>file:/C:/Users/hilmi/Documents/NetBeansProjects/Login/src/com/button/buttonGroupJawaban.java</file>
-            <file>file:/C:/Users/hilmi/Documents/NetBeansProjects/Login/src/com/main/Login.java</file>
             <file>file:/C:/Users/hilmi/Documents/NetBeansProjects/Login/src/com/panel/info_penyakit.java</file>
-            <file>file:/C:/Users/hilmi/Documents/NetBeansProjects/Login/src/com/main/registrasi.java</file>
-            <file>file:/C:/Users/hilmi/Documents/NetBeansProjects/Login/src/com/main/edit_rs.java</file>
-            <file>file:/C:/Users/hilmi/Documents/NetBeansProjects/Login/src/com/panel/survey_mood.java</file>
-            <file>file:/C:/Users/hilmi/Documents/NetBeansProjects/Login/src/koneksi/konek.java</file>
-            <file>file:/C:/Users/hilmi/Documents/NetBeansProjects/Login/src/com/panel/konsultasi.java</file>
+            <file>file:/C:/Users/hilmi/Documents/NetBeansProjects/Login/src/com/panel/dashboard_user.java</file>
+            <file>file:/C:/Users/hilmi/Documents/NetBeansProjects/Login/src/com/panel/adm_data_penyakit.java</file>
         </group>
     </open-files>
 </project-private>

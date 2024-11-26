@@ -16,14 +16,38 @@ public class adm_data_rs extends javax.swing.JPanel {
      private Connection connection;
 
     public adm_data_rs() {
-        initComponents();
-        try {
-            connection = konek.GetConnection();
-            loadDataToTable();
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Koneksi ke database gagal: " + e.getMessage());
-        }
+    initComponents();
+
+    try {
+        connection = konek.GetConnection();
+        loadDataToTable();
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Koneksi ke database gagal: " + e.getMessage());
     }
+
+    // Atur layout utama
+    setLayout(new java.awt.BorderLayout());
+
+    // Panel utama dengan padding
+    JPanel containerPanel = new JPanel(new java.awt.BorderLayout());
+    containerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Padding 20px di semua sisi
+
+    // Tambahkan tabel ke panel
+    containerPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+    // Panel untuk tombol
+    JPanel buttonPanel = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+    buttonPanel.add(delete_btn);
+    buttonPanel.add(update_btn);
+    buttonPanel.add(tambah_rs_btn);
+
+    // Tambahkan panel tombol ke bagian bawah
+    containerPanel.add(buttonPanel, java.awt.BorderLayout.SOUTH);
+
+    // Tambahkan container panel ke layout utama
+    add(containerPanel, java.awt.BorderLayout.CENTER);
+}
+
 
     private void loadDataToTable() {
         try {
