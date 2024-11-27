@@ -14,7 +14,7 @@ public class edit_rs extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }
 
-    // Method to update hospital data
+    // method buat update hospital data
     public void LoadRSData(String rumahsakitNama) {
         Connection conn = null;
         try {

@@ -1,10 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
+
 package com.panel;
 
-
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import koneksi.konek;
 import java.sql.*;
@@ -13,48 +13,84 @@ import javax.swing.table.DefaultTableModel;
 
 public class adm_data_rs extends javax.swing.JPanel {
 
-     private Connection connection;
+    private Connection connection;
 
-    public adm_data_rs() {
+  public adm_data_rs() {
     initComponents();
 
     try {
         connection = konek.GetConnection();
-        loadDataToTable();
+        loadDataToTable(""); //ngambil data ke tabel tanpa filter awal / load
     } catch (SQLException e) {
         JOptionPane.showMessageDialog(this, "Koneksi ke database gagal: " + e.getMessage());
     }
 
-    // Atur layout utama
-    setLayout(new java.awt.BorderLayout());
+    // set layout utama
+    setLayout(new BorderLayout(10, 10)); // spasi antar elemen
 
-    // Panel utama dengan padding
-    JPanel containerPanel = new JPanel(new java.awt.BorderLayout());
-    containerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Padding 20px di semua sisi
+    // Panel header
+    JPanel headerPanel = new JPanel();
+    headerPanel.setBackground(new Color(70, 130, 180));  
+    headerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));  
 
-    // Tambahkan tabel ke panel
-    containerPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+    JLabel titleLabel = new JLabel("Manajemen Data Rumah Sakit");
+    titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+    titleLabel.setForeground(Color.WHITE);  
+    headerPanel.add(titleLabel);
 
-    // Panel untuk tombol
-    JPanel buttonPanel = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-    buttonPanel.add(delete_btn);
-    buttonPanel.add(update_btn);
-    buttonPanel.add(tambah_rs_btn);
+    // panel utama
+    JPanel containerPanel = new JPanel(new BorderLayout());
+    containerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    containerPanel.setBackground(Color.WHITE);
 
-    // Tambahkan panel tombol ke bagian bawah
-    containerPanel.add(buttonPanel, java.awt.BorderLayout.SOUTH);
+    // panel pencarian
+    JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    searchPanel.setBackground(Color.WHITE); // Latar belakang putih
+    JTextField searchField = new JTextField(20);
+    searchField.setToolTipText("Cari berdasarkan nama RS");
+    searchField.addKeyListener(new java.awt.event.KeyAdapter() {
+        public void keyReleased(java.awt.event.KeyEvent evt) {
+            String searchText = searchField.getText().trim();
+            loadDataToTable(searchText); // Panggil ulang data dengan filter pencarian
+        }
+    });
+    searchPanel.add(new JLabel("Search:"));
+    searchPanel.add(searchField);
 
-    // Tambahkan container panel ke layout utama
-    add(containerPanel, java.awt.BorderLayout.CENTER);
+    // tambahin panel search ke atas tabel
+    containerPanel.add(searchPanel, BorderLayout.NORTH);
+
+    // tambahin tabel ke containerPanel
+    containerPanel.add(jScrollPane1, BorderLayout.CENTER);
+
+    // panel buat button
+    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    buttonPanel.setBackground(Color.WHITE);
+    buttonPanel.add(tambah_rs_btn);  
+    buttonPanel.add(update_btn);  
+    buttonPanel.add(delete_btn);  
+
+    // buttonPanel di bagian bawah
+    containerPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+    add(headerPanel, BorderLayout.NORTH);
+    add(containerPanel, BorderLayout.CENTER);
 }
 
-
-    private void loadDataToTable() {
+    // ini fungsi buat nge muat data ke tabel dengan filter
+    private void loadDataToTable(String filter) {
         try {
-     
             String query = "SELECT id_rs, nama_rs, alamat, latitude, longitude FROM rumah_sakit";
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
+            if (!filter.isEmpty()) {
+                query += " WHERE nama_rs LIKE ?";  //filter pake LIKE = ?
+            }
+
+            PreparedStatement pst = connection.prepareStatement(query);
+            if (!filter.isEmpty()) {
+                pst.setString(1, "%" + filter + "%"); //pake nama rs
+            }
+
+            ResultSet rs = pst.executeQuery();
 
             DefaultTableModel model = new DefaultTableModel(new String[] {
                 "ID RS", "Nama RS", "Alamat", "Latitude", "Longitude" }, 0);
@@ -66,15 +102,16 @@ public class adm_data_rs extends javax.swing.JPanel {
                 double latitude = rs.getDouble("latitude");
                 double longitude = rs.getDouble("longitude");
 
-                model.addRow(new Object[] { idRs, namaRs, alamat, latitude, longitude });
+                model.addRow(new Object[] { idRs, namaRs, alamat, latitude, longitude });  // nambahin data ke tabel
             }
-            
-            tabel_rs.setModel(model);
+
+            tabel_rs.setModel(model);  // set model tabel
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error mengambil data: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error mengambil data: " + e.getMessage());  // handle error 
         }
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -186,6 +223,7 @@ public class adm_data_rs extends javax.swing.JPanel {
     }
          private void deleteRS(int idRs) {
         try {
+            //query delete pake whre id yg dipiilih
             String query = "DELETE FROM rumah_sakit WHERE id_rs = ?";
             PreparedStatement pst = connection.prepareStatement(query);
             pst.setInt(1, idRs);
@@ -193,7 +231,7 @@ public class adm_data_rs extends javax.swing.JPanel {
 
             if (rowsAffected > 0) {
                 JOptionPane.showMessageDialog(this, "Data rumah sakit berhasil dihapus");
-                loadDataToTable();  // Reload data setelah penghapusan
+                  loadDataToTable("");  // reload data setelah hapus data
             } else {
                 JOptionPane.showMessageDialog(this, "Data rumah sakit tidak ditemukan");
             }
@@ -203,126 +241,146 @@ public class adm_data_rs extends javax.swing.JPanel {
     }//GEN-LAST:event_delete_btnActionPerformed
 
     private void update_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_update_btnActionPerformed
-  int selectedRow = tabel_rs.getSelectedRow();
-    if (selectedRow != -1) {
+    int selectedRow = tabel_rs.getSelectedRow();
+   if (selectedRow != -1) {
 
-        int idRs = (int) tabel_rs.getValueAt(selectedRow, 0);
-        String namaRs = (String) tabel_rs.getValueAt(selectedRow, 1);
-        String alamat = (String) tabel_rs.getValueAt(selectedRow, 2);
-        double latitude = (double) tabel_rs.getValueAt(selectedRow, 3);
-        double longitude = (double) tabel_rs.getValueAt(selectedRow, 4);
+       // ambil data rumah sakit dari tabel
+       int idRs = (int) tabel_rs.getValueAt(selectedRow, 0);
+       String namaRs = (String) tabel_rs.getValueAt(selectedRow, 1);
+       String alamat = (String) tabel_rs.getValueAt(selectedRow, 2);
+       double latitude = (double) tabel_rs.getValueAt(selectedRow, 3);
+       double longitude = (double) tabel_rs.getValueAt(selectedRow, 4);
 
-        JPanel panel = new JPanel(new GridLayout(4, 2));
-        JTextField namaField = new JTextField(namaRs);
-        JTextField alamatField = new JTextField(alamat);
-        JTextField latField = new JTextField(String.valueOf(latitude));
-        JTextField longField = new JTextField(String.valueOf(longitude));
+       // buat panel untuk form update
+       JPanel panel = new JPanel(new GridLayout(4, 2));
+       JTextField namaField = new JTextField(namaRs);
+       JTextField alamatField = new JTextField(alamat);
+       JTextField latField = new JTextField(String.valueOf(latitude));
+       JTextField longField = new JTextField(String.valueOf(longitude));
 
-        panel.add(new JLabel("Nama RS:"));
-        panel.add(namaField);
-        panel.add(new JLabel("Alamat:"));
-        panel.add(alamatField);
-        panel.add(new JLabel("Latitude:"));
-        panel.add(latField);
-        panel.add(new JLabel("Longitude:"));
-        panel.add(longField);
+       // nambahin komponen ke panel
+       panel.add(new JLabel("nama rs:"));
+       panel.add(namaField);
+       panel.add(new JLabel("alamat:"));
+       panel.add(alamatField);
+       panel.add(new JLabel("latitude:"));
+       panel.add(latField);
+       panel.add(new JLabel("longitude:"));
+       panel.add(longField);
 
-        int result = JOptionPane.showConfirmDialog(null, panel, "Update Data Rumah Sakit",
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+       // tampilkan dialog buat update
+       int result = JOptionPane.showConfirmDialog(null, panel, "update data rumah sakit",
+               JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
-        if (result == JOptionPane.OK_OPTION) {
-            try {
+       if (result == JOptionPane.OK_OPTION) {
+           try {
+               // ambil data baru dari form
+               String newNama = namaField.getText().trim();
+               String newAlamat = alamatField.getText().trim();
+               double newLat = Double.parseDouble(latField.getText().trim());
+               double newLong = Double.parseDouble(longField.getText().trim());
 
-                String newNama = namaField.getText().trim();
-                String newAlamat = alamatField.getText().trim();
-                double newLat = Double.parseDouble(latField.getText().trim());
-                double newLong = Double.parseDouble(longField.getText().trim());
+               // cek apakah field kosong apa nggak
+               if (newNama.isEmpty() || newAlamat.isEmpty()) {
+                   JOptionPane.showMessageDialog(this, "semua field harus diisi!");
+                   return;
+               }
 
-                if (newNama.isEmpty() || newAlamat.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Semua field harus diisi!");
-                    return;
-                }
+               // query update rumah sakit where id rs
+               String query = "UPDATE rumah_sakit SET nama_rs = ?, alamat = ?, latitude = ?, longitude = ? WHERE id_rs = ?";
+               PreparedStatement pst = connection.prepareStatement(query);
+               pst.setString(1, newNama);
+               pst.setString(2, newAlamat);
+               pst.setDouble(3, newLat);
+               pst.setDouble(4, newLong);
+               pst.setInt(5, idRs);
 
+               // eksekusi update
+               int rowsAffected = pst.executeUpdate();
+               if (rowsAffected > 0) {
+                   JOptionPane.showMessageDialog(this, "data berhasil diupdate!");
+                   loadDataToTable(""); // refresh tabel
+               }
+           } catch (NumberFormatException e) {
+               // misal format angkanya salah
+               JOptionPane.showMessageDialog(this, "latitude dan longitude harus berupa angka!");
+           } catch (SQLException e) {
+               JOptionPane.showMessageDialog(this, "error updating data: " + e.getMessage()); // handle error
+           }
+       }
+   } else {
+       // jika belum mmilih rumah sakit
+       JOptionPane.showMessageDialog(this, "pilih rumah sakit yang akan diupdate!");
+   }
 
-                String query = "UPDATE rumah_sakit SET nama_rs = ?, alamat = ?, latitude = ?, longitude = ? WHERE id_rs = ?";
-                PreparedStatement pst = connection.prepareStatement(query);
-                pst.setString(1, newNama);
-                pst.setString(2, newAlamat);
-                pst.setDouble(3, newLat);
-                pst.setDouble(4, newLong);
-                pst.setInt(5, idRs);
-
-                int rowsAffected = pst.executeUpdate();
-                if (rowsAffected > 0) {
-                    JOptionPane.showMessageDialog(this, "Data berhasil diupdate!");
-                    loadDataToTable(); // Refresh table
-                }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "Latitude dan Longitude harus berupa angka!");
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(this, "Error updating data: " + e.getMessage());
-            }
-        }
-    } else {
-        JOptionPane.showMessageDialog(this, "Pilih rumah sakit yang akan diupdate!");
-    }
 
     }//GEN-LAST:event_update_btnActionPerformed
 
     private void tambah_rs_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tambah_rs_btnActionPerformed
 
-    JPanel panel = new JPanel(new GridLayout(4, 2));
-    JTextField namaField = new JTextField();
-    JTextField alamatField = new JTextField();
-    JTextField latField = new JTextField();
-    JTextField longField = new JTextField();
+        // buat panel grid layout buat input data rumah sakit
+     JPanel panel = new JPanel(new GridLayout(4, 2));
+     JTextField namaField = new JTextField();
+     JTextField alamatField = new JTextField();
+     JTextField latField = new JTextField();
+     JTextField longField = new JTextField();
 
-    panel.add(new JLabel("Nama RS:"));
-    panel.add(namaField);
-    panel.add(new JLabel("Alamat:"));
-    panel.add(alamatField);
-    panel.add(new JLabel("Latitude:"));
-    panel.add(latField);
-    panel.add(new JLabel("Longitude:"));
-    panel.add(longField);
+     // nambahin label sama field input ke panel
+     panel.add(new JLabel("nama rs:"));
+     panel.add(namaField);
+     panel.add(new JLabel("alamat:"));
+     panel.add(alamatField);
+     panel.add(new JLabel("latitude:"));
+     panel.add(latField);
+     panel.add(new JLabel("longitude:"));
+     panel.add(longField);
 
-    int result = JOptionPane.showConfirmDialog(null, panel, "Tambah Data Rumah Sakit",
-            JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+     // nampilin dialog buat nambah data rumah sakit
+     int result = JOptionPane.showConfirmDialog(null, panel, "tambah data rumah sakit",
+             JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
-    if (result == JOptionPane.OK_OPTION) {
-        try {
+     // jika admin klik ok
+     if (result == JOptionPane.OK_OPTION) {
+         try {
+             // ambil data dari field input
+             String nama = namaField.getText().trim();
+             String alamat = alamatField.getText().trim();
+             String latText = latField.getText().trim();
+             String longText = longField.getText().trim();
 
-            String nama = namaField.getText().trim();
-            String alamat = alamatField.getText().trim();
-            String latText = latField.getText().trim();
-            String longText = longField.getText().trim();
+             // ngecek apakah ada field yang kosong
+             if (nama.isEmpty() || alamat.isEmpty() || latText.isEmpty() || longText.isEmpty()) {
+                 JOptionPane.showMessageDialog(this, "semua field harus diisi!");
+                 return;
+             }
 
-            if (nama.isEmpty() || alamat.isEmpty() || latText.isEmpty() || longText.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Semua field harus diisi!");
-                return;
-            }
+             // konversi latitude dan longitude ke tipe double
+             double latitude = Double.parseDouble(latText);
+             double longitude = Double.parseDouble(longText);
 
-            double latitude = Double.parseDouble(latText);
-            double longitude = Double.parseDouble(longText);
+             // query memasukkan data rumah sakit ke database
+             String query = "INSERT INTO rumah_sakit (nama_rs, alamat, latitude, longitude) VALUES (?, ?, ?, ?)";
+             PreparedStatement pst = connection.prepareStatement(query);
+             pst.setString(1, nama);
+             pst.setString(2, alamat);
+             pst.setDouble(3, latitude);
+             pst.setDouble(4, longitude);
 
-            String query = "INSERT INTO rumah_sakit (nama_rs, alamat, latitude, longitude) VALUES (?, ?, ?, ?)";
-            PreparedStatement pst = connection.prepareStatement(query);
-            pst.setString(1, nama);
-            pst.setString(2, alamat);
-            pst.setDouble(3, latitude);
-            pst.setDouble(4, longitude);
+             // eksekusi query dan cek apakah data udah bisa ditambahkan
+             int rowsAffected = pst.executeUpdate();
+             if (rowsAffected > 0) {
+                 JOptionPane.showMessageDialog(this, "data berhasil ditambahkan!");
+                 loadDataToTable(""); // refresh tabel pas data sudah ditambahkan
+             }
+         } catch (NumberFormatException e) {
+             // error waktu latitude atau longitude bukan angka
+             JOptionPane.showMessageDialog(this, "latitude dan longitude harus berupa angka!");
+         } catch (SQLException e) {
+             // error waktu eksekusi query
+             JOptionPane.showMessageDialog(this, "error menambahkan data: " + e.getMessage());
+         }
+     }
 
-            int rowsAffected = pst.executeUpdate();
-            if (rowsAffected > 0) {
-                JOptionPane.showMessageDialog(this, "Data berhasil ditambahkan!");
-                loadDataToTable(); 
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Latitude dan Longitude harus berupa angka!");
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error menambahkan data: " + e.getMessage());
-        }
-    }
     }//GEN-LAST:event_tambah_rs_btnActionPerformed
 
 

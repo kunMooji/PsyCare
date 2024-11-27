@@ -4,75 +4,115 @@
  */
 package com.panel;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import koneksi.konek;
 import java.sql.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-
-
 public class adm_data_penyakit extends javax.swing.JPanel {
 
     private Connection connection;
 
-        public adm_data_penyakit() {
-           initComponents();
+   public adm_data_penyakit() {
+    initComponents();
 
-           try {
-               connection = konek.GetConnection();
-               loadDataToTable();
-           } catch (SQLException e) {
-               JOptionPane.showMessageDialog(this, "Koneksi ke database gagal: " + e.getMessage());
-           }
+    try {
+        connection = konek.GetConnection(); //koneksi
+        loadDataToTable(""); // load data penyakit ke tabel
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Koneksi ke database gagal: " + e.getMessage());
+    }
 
-           // Mengatur layout untuk mendukung resize
-           setLayout(new java.awt.BorderLayout());
+    // set layout utama
+    setLayout(new BorderLayout(10, 10)); // spasi antar elemen
 
-           // Panel utama dengan padding menggunakan EmptyBorder
-           JPanel containerPanel = new JPanel(new java.awt.BorderLayout());
-           containerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Padding 20px di semua sisi
+    // panel header
+    JPanel headerPanel = new JPanel();
+    headerPanel.setBackground(new Color(70, 130, 180));  
+    headerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));  
 
-           // Tambahkan tabel ke tengah panel
-           containerPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+    JLabel titleLabel = new JLabel("Manajemen Data Penyakit");
+    titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+    titleLabel.setForeground(Color.WHITE);  
+    headerPanel.add(titleLabel);
 
-           // Panel untuk tombol
-           JPanel buttonPanel = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-           buttonPanel.add(delete_btn);
-           buttonPanel.add(update_btn);
-           buttonPanel.add(tambah_rs_btn);
+    // panel utama
+    JPanel containerPanel = new JPanel(new BorderLayout());
+    containerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); //padding
+    containerPanel.setBackground(Color.WHITE);
 
-           containerPanel.add(buttonPanel, java.awt.BorderLayout.SOUTH);
+    // panel untuk pencarian
+    JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    searchPanel.setBackground(Color.WHITE); // Latar belakang putih
+    JTextField searchField = new JTextField(20);
+    searchField.setToolTipText("Cari berdasarkan nama penyakit");
+    searchField.addKeyListener(new java.awt.event.KeyAdapter() {
+        @Override
+        public void keyReleased(java.awt.event.KeyEvent evt) {
+            String searchText = searchField.getText().trim();
+            loadDataToTable(searchText); // Filter data sesuai pencarian
+        }
+    });
+    searchPanel.add(new JLabel("Search:"));
+    searchPanel.add(searchField);
 
-           // Tambahkan container panel ke main panel
-           add(containerPanel, java.awt.BorderLayout.CENTER);
-       }
+    // panel pencarian taruh diatasnya container
+    containerPanel.add(searchPanel, BorderLayout.NORTH);
+
+    // add tabel penyakit ke container
+    containerPanel.add(jScrollPane1, BorderLayout.CENTER);
+
+    // panel tombol
+    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    buttonPanel.setBackground(Color.WHITE);
+    buttonPanel.add(tambah_penyakit_btn); 
+    buttonPanel.add(update_btn); 
+    buttonPanel.add(delete_btn); 
+    containerPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+    // tambahin panel header dan container ke layout utama
+    add(headerPanel, BorderLayout.NORTH);
+    add(containerPanel, BorderLayout.CENTER);
+}
 
 
-    
-      private void loadDataToTable() {
+    //  load data ke tabel
+    private void loadDataToTable(String searchText) {
         try {
-     
             String query = "SELECT nama_penyakit, deskripsi FROM penyakit";
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
+            if (searchText != null && !searchText.isEmpty()) {
+                query += " WHERE nama_penyakit LIKE ?";  // filter/ pncariannya berdasarkan nama penyakit
+            }
+
+            PreparedStatement pst = connection.prepareStatement(query);
+            if (searchText != null && !searchText.isEmpty()) {
+                pst.setString(1, "%" + searchText + "%");
+            }
+
+            ResultSet rs = pst.executeQuery();
 
             DefaultTableModel model = new DefaultTableModel(new String[] {
-                "Nama Penyakit ", "Deskirpsi"}, 0);
+                "Nama Penyakit", "Deskripsi" }, 0);
 
             while (rs.next()) {
                 String namaPenyakit = rs.getString("nama_penyakit");
-                String Deskripsi = rs.getString("deskripsi");
+                String deskripsi = rs.getString("deskripsi");
 
-                model.addRow(new Object[] { namaPenyakit, Deskripsi});
+                model.addRow(new Object[] { namaPenyakit, deskripsi });  // masukin data ke model
             }
-            
-            tabel_data_penyakit.setModel(model);
+
+            tabel_data_penyakit.setModel(model);  // set tabel dengan model yang baru
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error mengambil data: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error saat ambil data: " + e.getMessage());  
         }
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -87,7 +127,7 @@ public class adm_data_penyakit extends javax.swing.JPanel {
         tabel_data_penyakit = new javax.swing.JTable();
         delete_btn = new javax.swing.JButton();
         update_btn = new javax.swing.JButton();
-        tambah_rs_btn = new javax.swing.JButton();
+        tambah_penyakit_btn = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -132,10 +172,10 @@ public class adm_data_penyakit extends javax.swing.JPanel {
             }
         });
 
-        tambah_rs_btn.setText("tambahrs");
-        tambah_rs_btn.addActionListener(new java.awt.event.ActionListener() {
+        tambah_penyakit_btn.setText("tambah");
+        tambah_penyakit_btn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tambah_rs_btnActionPerformed(evt);
+                tambah_penyakit_btnActionPerformed(evt);
             }
         });
 
@@ -149,8 +189,8 @@ public class adm_data_penyakit extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(update_btn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tambah_rs_btn)
-                .addContainerGap(645, Short.MAX_VALUE))
+                .addComponent(tambah_penyakit_btn)
+                .addContainerGap(653, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(19, 19, 19)
@@ -164,7 +204,7 @@ public class adm_data_penyakit extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(delete_btn)
                     .addComponent(update_btn)
-                    .addComponent(tambah_rs_btn))
+                    .addComponent(tambah_penyakit_btn))
                 .addGap(41, 41, 41))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
@@ -175,88 +215,43 @@ public class adm_data_penyakit extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void delete_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delete_btnActionPerformed
-         int row = tabel_data_penyakit.getSelectedRow();
-        if (row != -1) {
-            String namaPenyakit = (String) tabel_data_penyakit.getValueAt(row, 0);
-            deletePenyakit(namaPenyakit);
-        } else {
-            JOptionPane.showMessageDialog(this, "Silakan pilih penyakit untuk dihapus");
-        }
-    }
-
+        int row = tabel_data_penyakit.getSelectedRow();
+ if (row != -1) {
+     String namaPenyakit = (String) tabel_data_penyakit.getValueAt(row, 0);
+     deletePenyakit(namaPenyakit);  // hapus penyakit berdasarkan nama
+ } else {
+     JOptionPane.showMessageDialog(this, "Silakan pilih penyakit untuk dihapus");  // ini misal gak ada kolom yang dipilih
+         }
+     }
     private void deletePenyakit(String namaPenyakit) {
-        try {
-            String query = "DELETE FROM penyakit WHERE nama_penyakit = ?";
-            PreparedStatement pst = connection.prepareStatement(query);
-            pst.setString(1, namaPenyakit);
-            
-            int rowsAffected = pst.executeUpdate();
-            if (rowsAffected > 0) {
-                JOptionPane.showMessageDialog(this, "Data penyakit berhasil dihapus");
-                loadDataToTable();  // Reload data setelah penghapusan
-            } else {
-                JOptionPane.showMessageDialog(this, "Data penyakit tidak ditemukan");
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error saat menghapus data: " + e.getMessage());
+    try {
+        // query untuk hapus data berdasarkan nama penyakit
+        String query = "DELETE FROM penyakit WHERE nama_penyakit = ?";
+        PreparedStatement pst = connection.prepareStatement(query);
+        pst.setString(1, namaPenyakit);
+        
+        int rowsAffected = pst.executeUpdate();
+        if (rowsAffected > 0) {
+            JOptionPane.showMessageDialog(this, "Data penyakit berhasil dihapus");
+            loadDataToTable(""); // refresh tabel setelah data dihapus
+        } else {
+            JOptionPane.showMessageDialog(this, "Data penyakit tidak ditemukan");  // kalo gak ada penyakit yang cocok
         }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error saat menghapus data: " + e.getMessage());  // handle error
+    }
+    
     }//GEN-LAST:event_delete_btnActionPerformed
 
     private void update_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_update_btnActionPerformed
-     int selectedRow = tabel_data_penyakit.getSelectedRow();
-        if (selectedRow != -1) {
-            String namaPenyakit = (String) tabel_data_penyakit.getValueAt(selectedRow, 0);
-            String deskripsi = (String) tabel_data_penyakit.getValueAt(selectedRow, 1);
+    int selectedRow = tabel_data_penyakit.getSelectedRow();
+    if (selectedRow != -1) {
+    String namaPenyakit = (String) tabel_data_penyakit.getValueAt(selectedRow, 0);
+    String deskripsi = (String) tabel_data_penyakit.getValueAt(selectedRow, 1);
 
-            JPanel panel = new JPanel(new GridLayout(2, 2));
-            JTextField namaField = new JTextField(namaPenyakit);
-            JTextArea deskripsiArea = new JTextArea(deskripsi, 5, 20);
-            deskripsiArea.setLineWrap(true);
-            deskripsiArea.setWrapStyleWord(true);
-            JScrollPane scrollPane = new JScrollPane(deskripsiArea);
-
-            panel.add(new JLabel("Nama Penyakit:"));
-            panel.add(namaField);
-            panel.add(new JLabel("Deskripsi:"));
-            panel.add(scrollPane);
-
-            int result = JOptionPane.showConfirmDialog(null, panel, "Update Data Penyakit",
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-
-            if (result == JOptionPane.OK_OPTION) {
-                try {
-                    String newNama = namaField.getText().trim();
-                    String newDeskripsi = deskripsiArea.getText().trim();
-
-                    if (newNama.isEmpty() || newDeskripsi.isEmpty()) {
-                        JOptionPane.showMessageDialog(this, "Semua field harus diisi!");
-                        return;
-                    }
-
-                    String query = "UPDATE penyakit SET nama_penyakit = ?, deskripsi = ? WHERE nama_penyakit = ?";
-                    PreparedStatement pst = connection.prepareStatement(query);
-                    pst.setString(1, newNama);
-                    pst.setString(2, newDeskripsi);
-                    pst.setString(3, namaPenyakit);
-
-                    int rowsAffected = pst.executeUpdate();
-                    if (rowsAffected > 0) {
-                        JOptionPane.showMessageDialog(this, "Data berhasil diupdate!");
-                        loadDataToTable();
-                    }
-                } catch (SQLException e) {
-                    JOptionPane.showMessageDialog(this, "Error updating data: " + e.getMessage());
-                }
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Pilih penyakit yang akan diupdate!");
-        }
-    }//GEN-LAST:event_update_btnActionPerformed
-
-    private void tambah_rs_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tambah_rs_btnActionPerformed
-  JPanel panel = new JPanel(new GridLayout(2, 2));
-    JTextField namaField = new JTextField();
-    JTextArea deskripsiArea = new JTextArea(5, 20);
+    JPanel panel = new JPanel(new GridLayout(2, 2));
+    JTextField namaField = new JTextField(namaPenyakit);
+    JTextArea deskripsiArea = new JTextArea(deskripsi, 5, 20);
     deskripsiArea.setLineWrap(true);
     deskripsiArea.setWrapStyleWord(true);
     JScrollPane scrollPane = new JScrollPane(deskripsiArea);
@@ -266,47 +261,92 @@ public class adm_data_penyakit extends javax.swing.JPanel {
     panel.add(new JLabel("Deskripsi:"));
     panel.add(scrollPane);
 
-int result = JOptionPane.showConfirmDialog(null, panel, "Tambah Data Penyakit",
-        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+    int result = JOptionPane.showConfirmDialog(null, panel, "Update Data Penyakit",
+            JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
-if (result == JOptionPane.OK_OPTION) {
-    try {
-        String nama = namaField.getText().trim();
-        String deskripsi = deskripsiArea.getText().trim();
+    if (result == JOptionPane.OK_OPTION) {
+        try {
+            String newNama = namaField.getText().trim();
+            String newDeskripsi = deskripsiArea.getText().trim();
 
-        // Validasi input tidak boleh kosong
-        if (nama.isEmpty() || deskripsi.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Semua field harus diisi!");
-            return;
+            if (newNama.isEmpty() || newDeskripsi.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Semua kolom harus diisi dulu!");
+                return;
+            }
+
+            String query = "UPDATE penyakit SET nama_penyakit = ?, deskripsi = ? WHERE nama_penyakit = ?";
+            PreparedStatement pst = connection.prepareStatement(query);
+            pst.setString(1, newNama);
+            pst.setString(2, newDeskripsi);
+            pst.setString(3, namaPenyakit);
+
+            int rowsAffected = pst.executeUpdate();
+            if (rowsAffected > 0) {
+                JOptionPane.showMessageDialog(this, "Data penyakit berhasil diupdate!");
+                loadDataToTable(""); // refresh data
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error saat update data: " + e.getMessage());
         }
-
-        // Query SQL tanpa kolom id_penyakit karena AUTO_INCREMENT
-        String query = "INSERT INTO penyakit (nama_penyakit, deskripsi) VALUES (?, ?)";
-        PreparedStatement pst = connection.prepareStatement(query);
-
-        // Set parameter
-        pst.setString(1, nama);
-        pst.setString(2, deskripsi);
-
-        // Eksekusi query
-        int rowsAffected = pst.executeUpdate();
-        if (rowsAffected > 0) {
-            JOptionPane.showMessageDialog(null, "Data penyakit berhasil ditambahkan!");
-            loadDataToTable(); // Method untuk refresh data di tabel
-        }
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Error menambahkan data: " + e.getMessage());
     }
+} else {
+    JOptionPane.showMessageDialog(this, "Pilih dulu penyakit yang akan diupdate!");
 }
 
-    }//GEN-LAST:event_tambah_rs_btnActionPerformed
+    }//GEN-LAST:event_update_btnActionPerformed
+
+    private void tambah_penyakit_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tambah_penyakit_btnActionPerformed
+    JPanel panel = new JPanel(new GridLayout(2, 2));
+    JTextField namaField = new JTextField();  // buat field untuk nama penyakit
+    JTextArea deskripsiArea = new JTextArea(5, 20);  // buat area teks buat deskripsi
+    deskripsiArea.setLineWrap(true);
+    deskripsiArea.setWrapStyleWord(true);
+    JScrollPane scrollPane = new JScrollPane(deskripsiArea);  // scrollable area buat deskripsi
+
+    // Menambahkan label dan field ke panel
+    panel.add(new JLabel("Nama Penyakit:"));
+    panel.add(namaField);
+    panel.add(new JLabel("Deskripsi:"));
+    panel.add(scrollPane);
+
+    // Menampilkan dialog input
+    int result = JOptionPane.showConfirmDialog(null, panel, "Tambah Data Penyakit",
+            JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+    if (result == JOptionPane.OK_OPTION) {  // kalo admin klik OK
+        try {
+            String newNama = namaField.getText().trim();
+            String newDeskripsi = deskripsiArea.getText().trim();
+
+            if (newNama.isEmpty() || newDeskripsi.isEmpty()) {  // cek kalo ada field kosong
+                JOptionPane.showMessageDialog(this, "Semua kolom harus diisi dulu!");
+                return;
+            }
+
+            // Query untuk menambah data penyakit baru
+            String query = "INSERT INTO penyakit (nama_penyakit, deskripsi) VALUES (?, ?)";
+            PreparedStatement pst = connection.prepareStatement(query);
+            pst.setString(1, newNama);
+            pst.setString(2, newDeskripsi);
+
+            int rowsAffected = pst.executeUpdate();
+            if (rowsAffected > 0) {  // kalo data berhasil ditambah
+                JOptionPane.showMessageDialog(this, "Data penyakit berhasil ditambahkan!");
+                loadDataToTable(""); // reload data ke tabel
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error saat menambah data: " + e.getMessage());
+        }
+    }
+
+    }//GEN-LAST:event_tambah_penyakit_btnActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton delete_btn;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tabel_data_penyakit;
-    private javax.swing.JButton tambah_rs_btn;
+    private javax.swing.JButton tambah_penyakit_btn;
     private javax.swing.JButton update_btn;
     // End of variables declaration//GEN-END:variables
 }

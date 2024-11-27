@@ -29,50 +29,51 @@ public class info_penyakit extends javax.swing.JPanel {
         loadPenyakitData();
     }
 
-    private void setupUI() {
-        setLayout(new BorderLayout());
-        setBackground(new Color(255, 255, 255));
-
-        // Panel untuk judul
-        JPanel titlePanel = new JPanel();
-        titlePanel.setBackground(new Color(255, 255, 255));
-        titlePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        
-        JLabel titleLabel = new JLabel("Informasi Penyakit Mental");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        titleLabel.setForeground(new Color(51, 51, 51));
-        titlePanel.add(titleLabel);
-
-        JPanel wrapperPanel = new JPanel(new BorderLayout());
-        wrapperPanel.setBackground(new Color(255, 255, 255));
+  private void setupUI() {
+    setLayout(new BorderLayout(10, 10));  
+    setBackground(new Color(245, 245, 245)); 
     
-        cardPanel = new JPanel() {
-            @Override
-            public Dimension getPreferredSize() {
-                Dimension size = super.getPreferredSize();
-                return new Dimension(getParent().getWidth(), size.height);
-            }
-        };
-        
-        cardPanel.setLayout(new GridLayout(0, 2, 20, 20));
-        cardPanel.setBackground(new Color(255, 255, 255));
-        cardPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    // panel judul
+    JPanel titlePanel = new JPanel();
+    titlePanel.setBackground(new Color(70, 130, 180)); 
+    titlePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); //padding/ spasi jarak
 
-        // scrollpane
-        JScrollPane scrollPane = new JScrollPane(cardPanel);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setBorder(null);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        
-        wrapperPanel.add(scrollPane, BorderLayout.CENTER);
+    JLabel titleLabel = new JLabel("Informasi Penyakit Mental");
+    titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));  
+    titleLabel.setForeground(Color.WHITE);  
+    titlePanel.add(titleLabel); // add label ke panel judul
 
-        add(titlePanel, BorderLayout.NORTH);
-        add(wrapperPanel, BorderLayout.CENTER);
+    // panel pembungkus untuk informasi card
+    JPanel wrapperPanel = new JPanel(new BorderLayout());
+    wrapperPanel.setBackground(new Color(245, 245, 245)); 
 
-        // Initialize connection
+//card informasi
+    cardPanel = new JPanel() {
+        @Override
+        public Dimension getPreferredSize() {
+            Dimension size = super.getPreferredSize();
+            return new Dimension(getParent().getWidth(), size.height);  
+        }
+    };
+    cardPanel.setLayout(new GridLayout(0, 2, 20, 20)); // grid dengan 2 kolom 
+    cardPanel.setBackground(new Color(250, 250, 250));  
+    cardPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));  
+
+    // Scroll pane untuk kartu informasi
+    JScrollPane scrollPane = new JScrollPane(cardPanel);
+    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);  
+    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED); 
+    scrollPane.setBorder(BorderFactory.createLineBorder(new Color(70, 130, 180), 2));  
+    scrollPane.getVerticalScrollBar().setUnitIncrement(16);  
+
+    wrapperPanel.add(scrollPane, BorderLayout.CENTER);  
+
+    add(titlePanel, BorderLayout.NORTH);  
+    add(wrapperPanel, BorderLayout.CENTER);  
+
+    //inisialisasi koneksi ke db
         try {
-            connection = konek.GetConnection();
+            connection = konek.GetConnection(); // kalo ga bisa connect ke db, nanti muncul error
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error koneksi database: " + e.getMessage());
         }
@@ -94,7 +95,7 @@ public class info_penyakit extends javax.swing.JPanel {
                 );
                 //ini buat nampilin data penyakit sbg card di ui nya
                 penyakitList.add(penyakit);
-                addPenyakitCard(penyakit);
+                addPenyakitCard(penyakit); // ini manggil fungsi buat nampilin card
             }
 
         } catch (SQLException e) {
@@ -149,8 +150,9 @@ public class info_penyakit extends javax.swing.JPanel {
         card.add(buttonPanel, BorderLayout.SOUTH);
 
         //nge add / manggil card ini ke panel utamanya
-        cardPanel.add(card);
+        cardPanel.add(card); // ini penting, karena ngasih view kartu penyakit di aplikasi
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

@@ -27,173 +27,180 @@ public class konsultasi extends javax.swing.JPanel {
 
     public konsultasi() {
         init();
-        setupUI();
-        loadDokterData();
+        setupUI();  //nyiapin tampilan UI
+        loadDokterData(); //ngambil data dokter dari database
     }
 
     private void openWhatsApp(String notelp) {
         try {
-            String cleanNumber = notelp.replaceAll("[^0-9]", "");
+            String cleanNumber = notelp.replaceAll("[^0-9]", ""); //hapus semua karakter selain angka, buat format nomor yang bersih
             
             if (!cleanNumber.startsWith("62") && cleanNumber.startsWith("0")) {
-                cleanNumber = "62" + cleanNumber.substring(1);
+                cleanNumber = "62" + cleanNumber.substring(1); //ubah nomor telp yang diawali 0 jadi format internasional Indonesia
             }
             
-            String url = "https://wa.me/" + cleanNumber;
-            
-            Desktop.getDesktop().browse(new URI(url));
+            String url = "https://wa.me/" + cleanNumber; //bikin link WhatsApp
+            Desktop.getDesktop().browse(new URI(url)); //nyalain browser dan buka link WhatsApp
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, 
                 "error membuka whatsapp: " + e.getMessage(),
                 "error",
-                JOptionPane.ERROR_MESSAGE);
+                JOptionPane.ERROR_MESSAGE); //kalo error muncul pop-up pesan
         }
     }
 
-    private void setupUI() {
-        setLayout(new BorderLayout());
-        setBackground(new Color(245, 245, 245));
+private void setupUI() {
+    setLayout(new BorderLayout(10, 10)); // bikin layout utama, biar rapi ada jarak antar elemen
+    setBackground(new Color(245, 245, 245));  
 
-        JPanel titlePanel = new JPanel();
-        titlePanel.setBackground(new Color(255, 255, 255));
-        titlePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        
-        JLabel titleLabel = new JLabel("Daftar Dokter Tersedia");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        titleLabel.setForeground(new Color(51, 51, 51));
-        titlePanel.add(titleLabel);
+    // panel buat judul di atas
+    JPanel titlePanel = new JPanel();
+    titlePanel.setBackground(new Color(70, 130, 180));  
+    titlePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // kasih jarak biar gak mepet
 
-        JPanel wrapperPanel = new JPanel(new BorderLayout());
-        wrapperPanel.setBackground(new Color(245, 245, 245));
+    // label buat tulisan judul
+    JLabel titleLabel = new JLabel("Daftar Dokter Tersedia");
+    titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));  
+    titleLabel.setForeground(Color.WHITE);  
+    titlePanel.add(titleLabel); // tempelin label judul ke panel
 
-        cardPanel = new JPanel() {
-            @Override
-            public Dimension getPreferredSize() {
-                Dimension size = super.getPreferredSize();
-                return new Dimension(getParent().getWidth(), size.height);
-            }
-        };
-        cardPanel.setLayout(new GridLayout(0, 2, 20, 20));
-        cardPanel.setBackground(new Color(245, 245, 245));
-        cardPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    // panel pembungkus buat nampilin kartu dokter
+    JPanel wrapperPanel = new JPanel(new BorderLayout());
+    wrapperPanel.setBackground(new Color(245, 245, 245));  
 
-        JScrollPane scrollPane = new JScrollPane(cardPanel);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setBorder(null);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        
-        wrapperPanel.add(scrollPane, BorderLayout.CENTER);
-
-        add(titlePanel, BorderLayout.NORTH);
-        add(wrapperPanel, BorderLayout.CENTER);
-
-        try {
-            connection = konek.GetConnection();
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error koneksi database: " + e.getMessage());
+    // panel buat grid kartu dokter
+    cardPanel = new JPanel() {
+        @Override
+        public Dimension getPreferredSize() {
+            Dimension size = super.getPreferredSize();
+            return new Dimension(getParent().getWidth(), size.height); // lebarnya ikut parent
         }
+    };
+    cardPanel.setLayout(new GridLayout(0, 2, 20, 20));  
+    cardPanel.setBackground(new Color(250, 250, 250));  
+    cardPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // kasih padding di pinggiran grid
+
+    // scroll panel buat kartu dokter
+    JScrollPane scrollPane = new JScrollPane(cardPanel);
+    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);  
+    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);  
+    scrollPane.setBorder(BorderFactory.createLineBorder(new Color(70, 130, 180), 2));  
+    scrollPane.getVerticalScrollBar().setUnitIncrement(16); // biar scrollnya gak lambat
+
+    wrapperPanel.add(scrollPane, BorderLayout.CENTER); // masukin scrollpane ke wrapper panel
+
+    // tambahin komponen ke layout utama
+    add(titlePanel, BorderLayout.NORTH);  // judulnya di atas
+    add(wrapperPanel, BorderLayout.CENTER);  // grid kartu di tengah
+
+    // bikin koneksi ke database
+    try {
+        connection = konek.GetConnection(); // nyambungin ke database
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error koneksi database: " + e.getMessage()); // //handle error
     }
+}
 
-    private void loadDokterData() {
-        dokterList = new ArrayList<>();
-        try {
-            String query = "SELECT nama_dokter, jam_praktek, no_telp FROM dokter";
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
+private void loadDokterData() {
+    dokterList = new ArrayList<>(); // bikin list kosong buat nampung data dokter
+    try {
+        String query = "SELECT nama_dokter, jam_praktek, no_telp FROM dokter"; // query buat ambil data dokter
+        Statement stmt = connection.createStatement(); // bikin statement buat jalanin query
+        ResultSet rs = stmt.executeQuery(query); // jalanin query, hasilnya masuk ke rs
 
-            while (rs.next()) {
-                DokterData dokter = new DokterData(
-                    rs.getString("nama_dokter"),
-                    rs.getString("jam_praktek"),
-                    rs.getString("no_telp")
-                );
-                dokterList.add(dokter);
-                addDokterCard(dokter);
-            }
-
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error mengambil data: " + e.getMessage());
+        while (rs.next()) {
+            DokterData dokter = new DokterData(
+                rs.getString("nama_dokter"), // ambil nama dokter, dst
+                rs.getString("jam_praktek"), 
+                rs.getString("no_telp") 
+            );
+            dokterList.add(dokter); // tambahin dokter ke list
+            addDokterCard(dokter); // bikin kartu dokter dan tempelin ke tampilan
         }
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error mengambil data: " + e.getMessage()); // kalau error ambil data, kasih tau
     }
+}
+
 
     private void addDokterCard(DokterData dokter) {
-        JPanel card = new JPanel();
-        card.setLayout(new BorderLayout(10, 10));
-        card.setBackground(Color.WHITE);
+        JPanel card = new JPanel(); 
+        card.setLayout(new BorderLayout(10, 10)); //layout untuk kartu dokter
+        card.setBackground(Color.WHITE); 
         card.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(230, 230, 230), 1),
-            BorderFactory.createEmptyBorder(15, 15, 15, 15)
+            BorderFactory.createLineBorder(new Color(230, 230, 230), 1), 
+            BorderFactory.createEmptyBorder(15, 15, 15, 15)  
         ));
 
-        JPanel headerPanel = new JPanel(new BorderLayout(10, 0));
-        headerPanel.setOpaque(false);
+        JPanel headerPanel = new JPanel(new BorderLayout(10, 0));  
+        headerPanel.setOpaque(false); //buat transparan
+
+        JLabel iconLabel = new JLabel("\uD83D\uDC68\u200D⚕️"); //icon dokter
+        iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 32)); //ukuran font icon
+        headerPanel.add(iconLabel, BorderLayout.WEST); //masukin icon ke kiri
+
+        JLabel nameLabel = new JLabel(dokter.nama); //masukin nama dokter
+        nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 16)); //set font dan ukuran nama dokter
+        headerPanel.add(nameLabel, BorderLayout.CENTER); // nama dokter di tengah
+
+        JPanel infoPanel = new JPanel(); //panel untuk info tambahan dokter
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS)); //susun info tapi set vertikal
+        infoPanel.setOpaque(false); //buat transparan
+        infoPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); //spacing untuk info panel
+
+        JPanel jamPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)); //panel untuk jam praktek
+        jamPanel.setOpaque(false); //buat transparan
+        JLabel jamLabel = new JLabel("⏰ Jam Praktek: " + dokter.jamPraktek); //label untuk jam praktek
+        jamLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14)); //font untuk jam praktek
+        jamPanel.add(jamLabel); //add label jam praktek
+
+        JPanel telpPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)); //panel nomor telepon
+        telpPanel.setOpaque(false);  
+        JLabel telpLabel = new JLabel("📞 " + dokter.noTelp); //label untuk nomor telepon
+        telpLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));  
+        telpPanel.add(telpLabel); //add nomor telepon ke panel
+
+        infoPanel.add(jamPanel); //masukin jam panel ke info panel
+        infoPanel.add(Box.createVerticalStrut(5));  
+        infoPanel.add(telpPanel); //masukin telp panel ke info panel
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); //panel untuk tombol
+        buttonPanel.setOpaque(false); //buat transparan
+
+        JButton contactBtn = new JButton("Contact via WhatsApp"); //tombol buat chat dokter lewat WhatsApp
+        contactBtn.setFont(new Font("Segoe UI", Font.BOLD, 12)); 
+        contactBtn.setBackground(new Color(37, 211, 102));  
+        contactBtn.setForeground(Color.WHITE); //warna teks tombol
+        contactBtn.setFocusPainted(false);  
+        contactBtn.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));  
+        contactBtn.setCursor(new Cursor(Cursor.HAND_CURSOR)); //ganti cursor jadi tangan saat hover
         
-        JLabel iconLabel = new JLabel("\uD83D\uDC68\u200D⚕️");
-        iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 32));
-        headerPanel.add(iconLabel, BorderLayout.WEST);
-
-        JLabel nameLabel = new JLabel(dokter.nama);
-        nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        headerPanel.add(nameLabel, BorderLayout.CENTER);
-
-        JPanel infoPanel = new JPanel();
-        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
-        infoPanel.setOpaque(false);
-        infoPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-
-        JPanel jamPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        jamPanel.setOpaque(false);
-        JLabel jamLabel = new JLabel("⏰ Jam Praktek: " + dokter.jamPraktek);
-        jamLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        jamPanel.add(jamLabel);
-        
-        JPanel telpPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        telpPanel.setOpaque(false);
-        JLabel telpLabel = new JLabel("📞 " + dokter.noTelp);
-        telpLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        telpPanel.add(telpLabel);
-
-        infoPanel.add(jamPanel);
-        infoPanel.add(Box.createVerticalStrut(5));
-        infoPanel.add(telpPanel);
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        buttonPanel.setOpaque(false);
-
-        JButton contactBtn = new JButton("Contact via WhatsApp");
-        contactBtn.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        contactBtn.setBackground(new Color(37, 211, 102));
-        contactBtn.setForeground(Color.WHITE);
-        contactBtn.setFocusPainted(false);
-        contactBtn.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
-        contactBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        
-        contactBtn.addActionListener(new ActionListener() {
+        contactBtn.addActionListener(new ActionListener() { //action listener untuk tombol
             @Override
             public void actionPerformed(ActionEvent e) {
-                openWhatsApp(dokter.noTelp);
+                openWhatsApp(dokter.noTelp); //buka WhatsApp ke nomor dokter
             }
         });
 
-        //efek
+        //efek hover pada tombol
         contactBtn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                contactBtn.setBackground(new Color(32, 176, 86));
+                contactBtn.setBackground(new Color(32, 176, 86)); //ganti warna tombol saat hover
             }
 
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                contactBtn.setBackground(new Color(37, 211, 102));
+                contactBtn.setBackground(new Color(37, 211, 102)); //kembalikan warna tombol ke semula
             }
         });
 
-        buttonPanel.add(contactBtn);
+        buttonPanel.add(contactBtn); //masukin tombol ke panel tombol
 
-        card.add(headerPanel, BorderLayout.NORTH);
-        card.add(infoPanel, BorderLayout.CENTER);
-        card.add(buttonPanel, BorderLayout.SOUTH);
+        card.add(headerPanel, BorderLayout.NORTH); //masukin header panel ke bagian atas kartu
+        card.add(infoPanel, BorderLayout.CENTER); //masukin info panel ke tengah kartu
+        card.add(buttonPanel, BorderLayout.SOUTH); //masukin button panel ke bawah kartu
 
-        cardPanel.add(card);
+        cardPanel.add(card); //masukin kartu dokter ke panel utama
     }
 
     @SuppressWarnings("unchecked")

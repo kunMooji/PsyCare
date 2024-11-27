@@ -1,9 +1,8 @@
 
 package com.main;
 
-import static com.main.user.mainPanel;
+import com.panel.adm_data_akun;
 import com.panel.adm_data_rs;
-import com.panel.dashboard_user;
 import com.panel.info_penyakit;
 import com.panel.rs_terdekat;
 import com.panel.adm_data_dokter;
@@ -21,11 +20,12 @@ import javax.swing.Timer;
 
 public class admin extends javax.swing.JFrame {
 
-   private dashboard_admin main;
+    private dashboard_admin main;
     private info_penyakit infoPenyakit;
     private adm_data_rs DataRs;
     private adm_data_dokter DataDokter;
     private adm_data_penyakit DataPenyakit;
+    private adm_data_akun DataAkun;
  
     public admin() {
     initComponents();
@@ -43,11 +43,13 @@ public class admin extends javax.swing.JFrame {
      DataRs = new adm_data_rs();
      DataDokter = new adm_data_dokter();
      DataPenyakit = new adm_data_penyakit();
+     DataAkun = new  adm_data_akun();
      
      addHoverAnimation(dashboard_btn);
      addHoverAnimation(dataDokter);
      addHoverAnimation(data_rs);
      addHoverAnimation(dataPenyakit);
+     addHoverAnimation(data_akun);
 
     }
     public void showForm(Component com){
@@ -142,6 +144,7 @@ public class admin extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         dataPenyakit = new javax.swing.JLabel();
+        data_akun = new javax.swing.JLabel();
         Header = new javax.swing.JPanel();
         tampilan1 = new com.button.Tampilan();
 
@@ -199,6 +202,13 @@ public class admin extends javax.swing.JFrame {
             }
         });
 
+        data_akun.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/picture/akun_aktif.png"))); // NOI18N
+        data_akun.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                data_akunMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout shape41Layout = new javax.swing.GroupLayout(shape41);
         shape41.setLayout(shape41Layout);
         shape41Layout.setHorizontalGroup(
@@ -207,15 +217,21 @@ public class admin extends javax.swing.JFrame {
                 .addGroup(shape41Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(shape41Layout.createSequentialGroup()
                         .addGap(22, 22, 22)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(shape41Layout.createSequentialGroup()
+                        .addGap(77, 77, 77)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(shape41Layout.createSequentialGroup()
+                        .addGap(22, 22, 22)
                         .addGroup(shape41Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(dashboard_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(dataDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(data_rs, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dataPenyakit)))
+                            .addComponent(data_rs, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(shape41Layout.createSequentialGroup()
-                        .addGap(77, 77, 77)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap()
+                        .addGroup(shape41Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(data_akun, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dataPenyakit, javax.swing.GroupLayout.Alignment.LEADING))))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
         shape41Layout.setVerticalGroup(
@@ -225,7 +241,7 @@ public class admin extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
-                .addGap(78, 78, 78)
+                .addGap(31, 31, 31)
                 .addComponent(dashboard_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(34, 34, 34)
                 .addComponent(data_rs, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -233,6 +249,8 @@ public class admin extends javax.swing.JFrame {
                 .addComponent(dataDokter)
                 .addGap(32, 32, 32)
                 .addComponent(dataPenyakit, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(data_akun, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -329,6 +347,10 @@ public class admin extends javax.swing.JFrame {
         showForm(DataPenyakit);
     }//GEN-LAST:event_dataPenyakitMouseClicked
 
+    private void data_akunMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_data_akunMouseClicked
+      showForm(DataAkun);
+    }//GEN-LAST:event_data_akunMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -372,6 +394,7 @@ public class admin extends javax.swing.JFrame {
     private javax.swing.JLabel dashboard_btn;
     private javax.swing.JLabel dataDokter;
     private javax.swing.JLabel dataPenyakit;
+    private javax.swing.JLabel data_akun;
     private javax.swing.JLabel data_rs;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

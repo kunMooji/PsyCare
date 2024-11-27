@@ -209,13 +209,13 @@ public class registrasi extends javax.swing.JFrame {
     String inputTanggal = tanggal_lahir_txt.getText();
     String formattedDate = "";
 
-    // Validate password match
+    //validasi apakah password sama atau tidak dengan repassword
     if (!password.equals(repassword)) {
         JOptionPane.showMessageDialog(this, "Password dan Re-password tidak cocok!");
         return;
     }
 
-    // Format the date
+    // format tanggal
     try {
         SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy");
         SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");

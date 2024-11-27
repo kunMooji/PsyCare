@@ -1,10 +1,16 @@
 
 package com.main;
 
+import static com.main.user.mainPanel;
+import com.panel.dashboard_admin;
 import com.panel.dashboard_user;
 import com.panel.info_penyakit;
+import com.panel.info_penyakit;
+import com.panel.konsultasi;
 import com.panel.konsultasi;
 import com.panel.rs_terdekat;
+import com.panel.rs_terdekat;
+import com.panel.survey_mood;
 import com.panel.survey_mood;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -24,30 +30,26 @@ public class user extends javax.swing.JFrame {
  private konsultasi kawanKonsul;
  private info_penyakit penyakitInfo;
  private survey_mood survey;
-   private int userId;
+ private int userId;
    
     public user() {
         initComponents();
+        init(); 
         setLocationRelativeTo(null);
+        setBackground(new Color(0, 0, 0, 0));
         tampilan1.event(this, background1);
-        init();
     }
     
     public void setUserId(int userId) {
         this.userId = userId;
     }
-    
-        private void initializeSurveyPanel() {
-        survey_mood surveyPanel = new survey_mood(userId);
-        background1.add(surveyPanel); 
-    }
-
+  
     
     public void init(){
+        
    main = new dashboard_user();
-   mainPanel.setLayout(new BorderLayout());
-   mainPanel.add(main);
-   
+     mainPanel.setLayout(new BorderLayout());
+     mainPanel.add(main);   
    rsTerdekat = new rs_terdekat();
    kawanKonsul = new konsultasi();
    penyakitInfo = new info_penyakit();
@@ -57,16 +59,17 @@ public class user extends javax.swing.JFrame {
    addHoverAnimation(rs_terdekat_btn1);
    addHoverAnimation(kawan_konsul);
    addHoverAnimation(info_penyakit);
+   addHoverAnimation(survey_btn);
    
 }
-
     public void showForm(Component com){
+        //ini method buat nampilin panel dengan cara ngeremove dulu
         mainPanel.removeAll();
         mainPanel.add(com);
         mainPanel.repaint();
         mainPanel.revalidate();
     }
-  
+    
     
     //ini sm kya di admin
     private void addHoverAnimation(JLabel label) {
@@ -216,7 +219,7 @@ public class user extends javax.swing.JFrame {
         shape41Layout.setHorizontalGroup(
             shape41Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(shape41Layout.createSequentialGroup()
-                .addGap(16, 16, 16)
+                .addGap(20, 20, 20)
                 .addGroup(shape41Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(survey_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(shape41Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -224,22 +227,22 @@ public class user extends javax.swing.JFrame {
                         .addComponent(info_penyakit, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(rs_terdekat_btn1, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(dashboard_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addContainerGap(52, Short.MAX_VALUE))
         );
         shape41Layout.setVerticalGroup(
             shape41Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(shape41Layout.createSequentialGroup()
-                .addGap(75, 75, 75)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, shape41Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(dashboard_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(34, 34, 34)
                 .addComponent(rs_terdekat_btn1, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35)
+                .addGap(34, 34, 34)
                 .addComponent(kawan_konsul, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36)
+                .addGap(32, 32, 32)
                 .addComponent(info_penyakit, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(33, 33, 33)
-                .addComponent(survey_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(39, 39, 39)
+                .addComponent(survey_btn)
+                .addGap(67, 67, 67))
         );
 
         javax.swing.GroupLayout DasboardLayout = new javax.swing.GroupLayout(Dasboard);

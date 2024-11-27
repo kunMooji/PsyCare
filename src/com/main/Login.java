@@ -125,8 +125,8 @@ public class Login extends javax.swing.JFrame {
                 new admin().setVisible(true);
                 this.dispose(); 
             } else if ("user".equals(role)) {
-                user userFrame = new user();
-                userFrame.setVisible(true);
+                user usr = new user();
+                usr.setVisible(true);
                 this.dispose(); 
             }
             //misal usn/pw nya salah muncul exception ky gini

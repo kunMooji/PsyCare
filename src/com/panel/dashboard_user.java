@@ -1,16 +1,23 @@
 package com.panel;
 
+import com.main.Login;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.border.TitledBorder;
 import koneksi.konek;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -19,130 +26,178 @@ import org.jfree.data.general.DefaultPieDataset;
 
 public class dashboard_user extends javax.swing.JPanel {
 
-      public dashboard_user() {
-        initComponents();
-        init();
+    public dashboard_user() {
+        initComponents(); 
+        init();   
     }
 
-    private void init() {
-        setLayout(new BorderLayout());
+    //ini biar pas di maximize ngikutin
+   private void init() {
+    setLayout(new BorderLayout(10, 10));  
+    setBackground(new Color(245, 245, 245));  
 
-        // Chart panel setup
-        JPanel chartPanelContainer = new JPanel(new BorderLayout());
-        chartPanelContainer.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 20, 20, 10)); // Margin untuk chart
-        chartPanelContainer.add(panel_chart, BorderLayout.CENTER);
+    // panel judul
+    JPanel titlePanel = new JPanel();
+    titlePanel.setBackground(new Color(70, 130, 180));  
+    titlePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));  
 
-        // Side panel for mood and score
-        JPanel sidePanel = new JPanel();
-        sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
-        sidePanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 10, 20, 20)); // Margin untuk side panel
+    JLabel titleLabel = new JLabel("Status Mood Harian");
+    titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));  
+    titleLabel.setForeground(Color.WHITE);  
+    titlePanel.add(titleLabel);  
 
-        // Mood detect panel
-        JPanel moodPanel = new JPanel();
-        moodPanel.setLayout(new BorderLayout());
-        moodPanel.add(new JLabel("Mood: "), BorderLayout.WEST); // Label mood
-        moodPanel.add(mood_detect, BorderLayout.CENTER);
-        sidePanel.add(moodPanel);
+    // panel untuk grafik pie
+    JPanel grafikPanelContainer = new JPanel(new BorderLayout());
+    grafikPanelContainer.setBorder(BorderFactory.createCompoundBorder(
+        BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
+        BorderFactory.createEmptyBorder(20, 20, 20, 20)
+    ));
+    grafikPanelContainer.setBackground(Color.WHITE);  
+    grafikPanelContainer.add(panel_chart, BorderLayout.CENTER); // ini biar grafik di tengah
 
-        // Spacer for separation
-        sidePanel.add(Box.createVerticalStrut(20)); // Jarak antar panel
+    // panel utk side info
+    JPanel sidePanel = new JPanel();
+    sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS)); // layputnya di set vertikal
+    sidePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // padding
+    sidePanel.setBackground(Color.WHITE); 
 
-        // Score panel
-        JPanel scorePanel = new JPanel();
-        scorePanel.setLayout(new BorderLayout());
-        scorePanel.add(new JLabel("Last Score: "), BorderLayout.WEST); // Label skor
-        scorePanel.add(skor_terakhir, BorderLayout.CENTER);
-        sidePanel.add(scorePanel);
+    // panel Deteksi Mood
+    JPanel moodPanel = new JPanel(new BorderLayout());
+    moodPanel.setBorder(BorderFactory.createTitledBorder(
+        BorderFactory.createLineBorder(new Color(180, 180, 180), 1),
+        "Deteksi Mood",
+        TitledBorder.DEFAULT_JUSTIFICATION,
+        TitledBorder.DEFAULT_POSITION,
+        new Font("Segoe UI", Font.BOLD, 14),
+        new Color(50, 50, 50)
+    ));
+    moodPanel.setBackground(Color.WHITE);
+    moodPanel.add(mood_detect, BorderLayout.CENTER);  
 
-        // JSplitPane to divide chart and side panel
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, chartPanelContainer, sidePanel);
-        splitPane.setDividerLocation(0.5); // Membagi setengah layar
-        splitPane.setResizeWeight(0.5); // Proporsi awal pembagian 50:50
-        splitPane.setContinuousLayout(true); // Smooth resizing
-        splitPane.setOneTouchExpandable(true); // Tombol untuk expand/collapse
+    // panel Latest Score
+    JPanel panelSkor = new JPanel(new BorderLayout());
+    panelSkor.setBorder(BorderFactory.createTitledBorder(
+        BorderFactory.createLineBorder(new Color(180, 180, 180), 1),
+        "Latest Score",
+        TitledBorder.DEFAULT_JUSTIFICATION,
+        TitledBorder.DEFAULT_POSITION,
+        new Font("Segoe UI", Font.BOLD, 14)
+    ));
+    panelSkor.setBackground(Color.WHITE);
+    panelSkor.add(skor_terakhir, BorderLayout.CENTER); // Menampilkan skor terakhir
 
-        add(splitPane, BorderLayout.CENTER);
+    // panel Status
+    panel_status.setBorder(BorderFactory.createTitledBorder(
+        BorderFactory.createLineBorder(new Color(180, 180, 180), 1),
+        "Status",
+        TitledBorder.DEFAULT_JUSTIFICATION,
+        TitledBorder.DEFAULT_POSITION,
+        new Font("Segoe UI", Font.BOLD, 14)
+    ));
+    panel_status.setBackground(Color.WHITE);
 
-        // Load data and chart
-        loadDataSurvey();
-        addPieChart();
+    // button Logout
+    JButton logout = new JButton("Logout");
+    logout.setAlignmentX(Component.CENTER_ALIGNMENT);
+    logout.setFont(new Font("Segoe UI", Font.BOLD, 14));
+    logout.setBackground(new Color(255, 102, 102));  
+    logout.setForeground(Color.WHITE);  
+    logout.setFocusPainted(false);  
+    logout.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));  
+    logout.addActionListener(e -> LogoutAction()); //action event buat logout buttonnyaa
+
+    // add komponen ke side panel
+    sidePanel.add(moodPanel);
+    sidePanel.add(Box.createVerticalStrut(20));
+    sidePanel.add(panelSkor);
+    sidePanel.add(Box.createVerticalStrut(20));
+    sidePanel.add(panel_status);
+    sidePanel.add(Box.createVerticalStrut(20));
+    sidePanel.add(logout);
+
+    // split panel buat grafik dan side panel, ngebagi ukuran panel 7;3 7 nya di chart pie nya
+    //3 nya di side panelnya
+    JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, grafikPanelContainer, sidePanel);
+    splitPane.setDividerLocation(0.7);  
+    splitPane.setResizeWeight(0.7); 
+    splitPane.setContinuousLayout(true);
+    splitPane.setOneTouchExpandable(true);  //ini biar splitpanenya bisa digeser kesana kesini
+
+    // nambahin komponen utama ke layout
+    add(titlePanel, BorderLayout.NORTH);  
+    add(splitPane, BorderLayout.CENTER);  
+
+    loadDataSurvey();
+    grafikPieAdd();
+}
+
+    private void LogoutAction() {
+        int confirm = JOptionPane.showConfirmDialog(this, "apakah yakin ingin logout ?", "", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            Login loginFrame = new Login();
+            loginFrame.setVisible(true);
+            ((javax.swing.JFrame) this.getTopLevelAncestor()).dispose();  // nutup frame
+        }
     }
 
-
-    
-    
-  private void addPieChart() {
+    private void grafikPieAdd() {
         try {
-            // Create dataset from database
-            DefaultPieDataset dataset = createDataset();
-
-            // Create pie chart
+            DefaultPieDataset dataset = createDataset();  // buat dataset
             JFreeChart pieChart = ChartFactory.createPieChart(
-                    "Distribusi Emosi", // Chart title
-                    dataset,            // Dataset
-                    true,               // Show legend
-                    true,               // Show tooltips
-                    false               // URLs not needed
+                    "Distribusi Emosi",
+                    dataset,        
+                    true,              
+                    true,             
+                    false               
             );
             ChartPanel chartPanel = new ChartPanel(pieChart);
-            chartPanel.setVisible(true);
+            chartPanel.setVisible(true);// set chart jadi visible
 
-            panel_chart.setLayout(new BorderLayout());
+            panel_chart.setLayout(new BorderLayout());  // set layout panel chart
             panel_chart.removeAll();
             panel_chart.add(chartPanel, BorderLayout.CENTER);
             panel_chart.validate();
             panel_chart.repaint();
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error creating pie chart: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "error saat memuat grafik : " + e.getMessage());  // error handling
             e.printStackTrace();
         }
     }
 
-
-    private DefaultPieDataset createDataset() throws SQLException {
+    private DefaultPieDataset createDataset() throws SQLException { // buat dataset untuk pie chart
         DefaultPieDataset dataset = new DefaultPieDataset();
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
         try {
-            conn = konek.GetConnection();
-            String query = "SELECT average_score FROM hasil_survey Where id = '1'";
+            conn = konek.GetConnection(); // koneksi ke database
+            String query = "SELECT average_score FROM hasil_survey Where id = '0'";  // query untuk ambil skor rata-rata
             stmt = conn.prepareStatement(query);
             rs = stmt.executeQuery();
             
-            int sadCount = 0;
-            int angryCount = 0;
-            int neutralCount = 0;
-            int happyCount = 0;
+            int burukHitungan = 0, cukupHitungan = 0, baikHitungan = 0, sangatBaikHitungan = 0;
 
-            // Count mood categories
             while (rs.next()) {
                 double averageScore = rs.getDouble("average_score");
 
-                if (averageScore >= 0 && averageScore <= 2.5) {
-                    sadCount++;
-                } else if (averageScore > 2.5 && averageScore <= 5.0) {
-                    angryCount++;
-                } else if (averageScore > 5.0 && averageScore <= 7.5) {
-                    neutralCount++;
-                } else if (averageScore > 7.5 && averageScore <= 10.0) {
-                    happyCount++;
-                }
+                if (averageScore <= 2.5) burukHitungan++;
+                else if (averageScore <= 5.0) cukupHitungan++;
+                else if (averageScore <= 7.5) baikHitungan++;
+                else sangatBaikHitungan++;
             }
-
-            // Add data to the dataset
-            dataset.setValue("Sedih", sadCount);
-            dataset.setValue("Marah", angryCount);
-            dataset.setValue("Netral", neutralCount);
-            dataset.setValue("Bahagia", happyCount);
+            
+            // nambahin data ke dataset buat pie chart
+            dataset.setValue("buruk", burukHitungan);
+            dataset.setValue("cukup", cukupHitungan);
+            dataset.setValue("baik", baikHitungan);
+            dataset.setValue("sangat baik", sangatBaikHitungan);
 
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error retrieving mood data: " + e.getMessage());
-            throw e; // Re-throw to be handled by caller
+            throw e;
         } finally {
-            // Close resources in reverse order
             if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
             if (stmt != null) try { stmt.close(); } catch (SQLException e) { e.printStackTrace(); }
             if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
@@ -150,53 +205,71 @@ public class dashboard_user extends javax.swing.JPanel {
 
         return dataset;
     }
-    
+
     private void loadDataSurvey() {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-
         try {
             conn = konek.GetConnection();
-
-            // ngambil skor rata-rata terakhir dari tabel hasil_survey
-            String query = "SELECT average_score FROM hasil_survey ORDER BY survey_date DESC LIMIT 1";
+            String query = "SELECT average_score FROM hasil_survey ORDER BY survey_date DESC LIMIT 1";  // ambil skor terbaru
             ps = conn.prepareStatement(query);
             rs = ps.executeQuery();
 
             if (rs.next()) {
-                
                 float skor_rata2 = rs.getFloat("average_score");
                 skor_terakhir.setText("Skor terakhir: " + skor_rata2);
-                
-                    String mood;
-              if (skor_rata2 >= 9) {
-                  mood = "Mood: Sangat Baik";
-              } else if (skor_rata2 >= 7) {
-                  mood = "Mood: Baik";
-              } else if (skor_rata2 >= 5) {
-                  mood = "Mood: Cukup Baik";
-              } else if (skor_rata2 >= 3) {
-                  mood = "Mood: Kurang Baik";
-              } else if (skor_rata2 >= 1) {
-                  mood = "Mood: Buruk";
-              } else {
-                  mood = "Mood: Sangat Buruk";
-              }
+
+                // mood berdasarkan skor
+                String mood = (skor_rata2 >= 9) ? "Mood: Sangat Baik" :
+                              (skor_rata2 >= 7) ? "Mood: Baik" :
+                              (skor_rata2 >= 5) ? "Mood: Cukup Baik" :
+                              (skor_rata2 >= 3) ? "Mood: Kurang Baik" :
+                              (skor_rata2 >= 1) ? "Mood: Buruk" : "Mood: Sangat Buruk";
 
                 mood_detect.setText(mood);
+
+                // status "Aman" atau "Tidak Aman"
+                String status = (skor_rata2 >= 3) ? "Aman" : "Tidak Aman";
+                status_yorno.setText("Status: " + status);  
+
+                // update border status
+                panel_status.setBorder(javax.swing.BorderFactory.createTitledBorder(
+                        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(180, 180, 180), 1),
+                        "Status: " + status,
+                        javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION,
+                        javax.swing.border.TitledBorder.DEFAULT_POSITION,
+                        new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14)
+                ));
+
+                panel_status.revalidate();
+                panel_status.repaint();
+
             } else {
+                // kalau gak ada data
                 skor_terakhir.setText("Skor terakhir: tidak ada data");
                 mood_detect.setText("Mood: tidak ada data");
+                status_yorno.setText("Status: Tidak Ada Data");
+                panel_status.setBorder(javax.swing.BorderFactory.createTitledBorder(
+                        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(180, 180, 180), 1),
+                        "Status: Tidak Ada Data",
+                        javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION,
+                        javax.swing.border.TitledBorder.DEFAULT_POSITION,
+                        new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14)
+                ));
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try { if (rs != null) rs.close(); } catch (Exception e) { e.printStackTrace(); }
-            try { if (ps != null) ps.close(); } catch (Exception e) { e.printStackTrace(); }
-            try { if (conn != null) conn.close(); } catch (Exception e) { e.printStackTrace(); }
+            try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+            try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+            try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
         }
     }
+
+
+
+
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -206,18 +279,43 @@ public class dashboard_user extends javax.swing.JPanel {
         mood_detect = new javax.swing.JLabel();
         skor_terakhir = new javax.swing.JLabel();
         panel_chart = new javax.swing.JPanel();
+        panel_status = new javax.swing.JPanel();
+        status_yorno = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        mood_detect.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         mood_detect.setText("mood : ?");
-        jPanel1.add(mood_detect, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 16, 140, 20));
+        jPanel1.add(mood_detect, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 140, 20));
 
+        skor_terakhir.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         skor_terakhir.setText("skor terakhir :  ?");
-        jPanel1.add(skor_terakhir, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        jPanel1.add(skor_terakhir, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, -1, -1));
 
+        panel_chart.setBackground(new java.awt.Color(255, 255, 255));
         panel_chart.setLayout(new java.awt.BorderLayout());
+
+        status_yorno.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        status_yorno.setText("status : ");
+
+        javax.swing.GroupLayout panel_statusLayout = new javax.swing.GroupLayout(panel_status);
+        panel_status.setLayout(panel_statusLayout);
+        panel_statusLayout.setHorizontalGroup(
+            panel_statusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_statusLayout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(status_yorno, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        panel_statusLayout.setVerticalGroup(
+            panel_statusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_statusLayout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addComponent(status_yorno)
+                .addContainerGap(34, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -227,15 +325,20 @@ public class dashboard_user extends javax.swing.JPanel {
                 .addGap(32, 32, 32)
                 .addComponent(panel_chart, javax.swing.GroupLayout.PREFERRED_SIZE, 505, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(330, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
+                    .addComponent(panel_status, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(297, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(72, 72, 72)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(108, 108, 108)
+                        .addComponent(panel_status, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(panel_chart, javax.swing.GroupLayout.PREFERRED_SIZE, 408, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(56, Short.MAX_VALUE))
         );
@@ -246,6 +349,8 @@ public class dashboard_user extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel mood_detect;
     private javax.swing.JPanel panel_chart;
+    private javax.swing.JPanel panel_status;
     private javax.swing.JLabel skor_terakhir;
+    private javax.swing.JLabel status_yorno;
     // End of variables declaration//GEN-END:variables
 }
