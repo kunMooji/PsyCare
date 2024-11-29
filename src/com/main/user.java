@@ -32,13 +32,14 @@ public class user extends javax.swing.JFrame {
  private survey_mood survey;
  private int userId;
    
-    public user() {
-        initComponents();
-        init(); 
-        setLocationRelativeTo(null);
-        setBackground(new Color(0, 0, 0, 0));
-        tampilan1.event(this, background1);
-    }
+public user(int userId1) {
+    initComponents();
+    setUserId(userId1); // Set the user ID
+    init(); 
+    setLocationRelativeTo(null);
+    setBackground(new Color(0, 0, 0, 0));
+    tampilan1.event(this, background1);
+}
     
     public void setUserId(int userId) {
         this.userId = userId;
@@ -47,7 +48,7 @@ public class user extends javax.swing.JFrame {
     
     public void init(){
         
-   main = new dashboard_user();
+  main = new dashboard_user(userId);
      mainPanel.setLayout(new BorderLayout());
      mainPanel.add(main);   
    rsTerdekat = new rs_terdekat();
@@ -343,14 +344,14 @@ public class user extends javax.swing.JFrame {
     }//GEN-LAST:event_survey_btnMouseClicked
 
  
-    public static void main(String args[]) {
+        public static void main(String args[]) {
+          java.awt.EventQueue.invokeLater(new Runnable() {
+              public void run() {
+                  new user(1).setVisible(true); // Replace '1' with the desired user ID
+              }
+          });
+      }
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new user().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Dasboard;

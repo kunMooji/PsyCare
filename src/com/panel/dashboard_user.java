@@ -26,9 +26,11 @@ import org.jfree.data.general.DefaultPieDataset;
 
 public class dashboard_user extends javax.swing.JPanel {
 
-    public dashboard_user() {
-        initComponents(); 
-        init();   
+       private int userId; //nyimpen id pengguna
+ public dashboard_user(int userId) {
+        this.userId = userId; // simpen ID pengguna
+        initComponents();
+        init();
     }
 
     //ini biar pas di maximize ngikutin
@@ -165,18 +167,12 @@ public class dashboard_user extends javax.swing.JPanel {
         }
     }
 
-    private DefaultPieDataset createDataset() throws SQLException { // buat dataset untuk pie chart
-        DefaultPieDataset dataset = new DefaultPieDataset();
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        try {
-            conn = konek.GetConnection(); // koneksi ke database
-            String query = "SELECT average_score FROM hasil_survey Where id = '0'";  // query untuk ambil skor rata-rata
-            stmt = conn.prepareStatement(query);
-            rs = stmt.executeQuery();
-            
+private DefaultPieDataset createDataset() throws SQLException {
+    DefaultPieDataset dataset = new DefaultPieDataset();
+    try (Connection conn = konek.GetConnection();
+         PreparedStatement stmt = conn.prepareStatement("SELECT average_score FROM hasil_survey WHERE id = ?")) {
+        stmt.setInt(1, userId); // Gunakan id dari login
+        try (ResultSet rs = stmt.executeQuery()) {
             int burukHitungan = 0, cukupHitungan = 0, baikHitungan = 0, sangatBaikHitungan = 0;
 
             while (rs.next()) {
@@ -187,89 +183,92 @@ public class dashboard_user extends javax.swing.JPanel {
                 else if (averageScore <= 7.5) baikHitungan++;
                 else sangatBaikHitungan++;
             }
-            
-            // nambahin data ke dataset buat pie chart
+
             dataset.setValue("buruk", burukHitungan);
             dataset.setValue("cukup", cukupHitungan);
             dataset.setValue("baik", baikHitungan);
             dataset.setValue("sangat baik", sangatBaikHitungan);
-
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error retrieving mood data: " + e.getMessage());
-            throw e;
-        } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
-            if (stmt != null) try { stmt.close(); } catch (SQLException e) { e.printStackTrace(); }
-            if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
         }
-
-        return dataset;
     }
+    return dataset;
+}
 
-    private void loadDataSurvey() {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+
+private void loadDataSurvey() {
+    Connection conn = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+
+    try {
+        conn = konek.GetConnection();
+
+        // query buat dapetin skor terakhir berdasarkan ID pengguna
+        String query = "SELECT average_score FROM hasil_survey WHERE id = ? ORDER BY survey_date DESC LIMIT 1";
+        ps = conn.prepareStatement(query);
+        ps.setInt(1, userId); // gunakan userId dari konstruktor
+
+        System.out.println("User ID: " + userId);
+        System.out.println("Query executed: " + query);
+
+        rs = ps.executeQuery();
+
+        if (rs.next()) {
+            // ngambil skor rata-rata
+            float skor_rata2 = rs.getFloat("average_score");
+            skor_terakhir.setText("Skor terakhir: " + skor_rata2);
+
+            // nentuin mood berdasarkan skor
+            String mood = (skor_rata2 >= 9) ? "Mood: Sangat Baik" :
+                          (skor_rata2 >= 7) ? "Mood: Baik" :
+                          (skor_rata2 >= 5) ? "Mood: Cukup Baik" :
+                          (skor_rata2 >= 3) ? "Mood: Kurang Baik" :
+                          (skor_rata2 >= 1) ? "Mood: Buruk" : "Mood: Sangat Buruk";
+            mood_detect.setText(mood);
+
+            //  status (Aman/Tidak Aman)
+            String status = (skor_rata2 >= 3) ? "Aman" : "Tidak Aman";
+            status_yorno.setText("Status: " + status);
+
+            // update border status panel
+            panel_status.setBorder(javax.swing.BorderFactory.createTitledBorder(
+                javax.swing.BorderFactory.createLineBorder(new java.awt.Color(180, 180, 180), 1),
+                "Status: " + status,
+                javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION,
+                javax.swing.border.TitledBorder.DEFAULT_POSITION,
+                new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14)
+            ));
+
+            // refresh tampilan panel
+            panel_status.revalidate();
+            panel_status.repaint();
+
+        } else {
+            // if tidak ada data ditemukan
+            skor_terakhir.setText("Skor terakhir: Tidak Ada Data");
+            mood_detect.setText("Mood: Tidak Ada Data");
+            status_yorno.setText("Status: Tidak Ada Data");
+            panel_status.setBorder(javax.swing.BorderFactory.createTitledBorder(
+                javax.swing.BorderFactory.createLineBorder(new java.awt.Color(180, 180, 180), 1),
+                "Status: Tidak Ada Data",
+                javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION,
+                javax.swing.border.TitledBorder.DEFAULT_POSITION,
+                new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14)
+            ));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace(); // log error ke console
+    } finally {
+        // close semua resource untuk mencegah memory leaks
         try {
-            conn = konek.GetConnection();
-            String query = "SELECT average_score FROM hasil_survey ORDER BY survey_date DESC LIMIT 1";  // ambil skor terbaru
-            ps = conn.prepareStatement(query);
-            rs = ps.executeQuery();
-
-            if (rs.next()) {
-                float skor_rata2 = rs.getFloat("average_score");
-                skor_terakhir.setText("Skor terakhir: " + skor_rata2);
-
-                // mood berdasarkan skor
-                String mood = (skor_rata2 >= 9) ? "Mood: Sangat Baik" :
-                              (skor_rata2 >= 7) ? "Mood: Baik" :
-                              (skor_rata2 >= 5) ? "Mood: Cukup Baik" :
-                              (skor_rata2 >= 3) ? "Mood: Kurang Baik" :
-                              (skor_rata2 >= 1) ? "Mood: Buruk" : "Mood: Sangat Buruk";
-
-                mood_detect.setText(mood);
-
-                // status "Aman" atau "Tidak Aman"
-                String status = (skor_rata2 >= 3) ? "Aman" : "Tidak Aman";
-                status_yorno.setText("Status: " + status);  
-
-                // update border status
-                panel_status.setBorder(javax.swing.BorderFactory.createTitledBorder(
-                        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(180, 180, 180), 1),
-                        "Status: " + status,
-                        javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION,
-                        javax.swing.border.TitledBorder.DEFAULT_POSITION,
-                        new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14)
-                ));
-
-                panel_status.revalidate();
-                panel_status.repaint();
-
-            } else {
-                // kalau gak ada data
-                skor_terakhir.setText("Skor terakhir: tidak ada data");
-                mood_detect.setText("Mood: tidak ada data");
-                status_yorno.setText("Status: Tidak Ada Data");
-                panel_status.setBorder(javax.swing.BorderFactory.createTitledBorder(
-                        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(180, 180, 180), 1),
-                        "Status: Tidak Ada Data",
-                        javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION,
-                        javax.swing.border.TitledBorder.DEFAULT_POSITION,
-                        new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14)
-                ));
-            }
-        } catch (Exception e) {
+            if (rs != null) rs.close();
+            if (ps != null) ps.close();
+            if (conn != null) conn.close();
+        } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
-            try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-            try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
         }
+        
     }
-
-
-
-
+}
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

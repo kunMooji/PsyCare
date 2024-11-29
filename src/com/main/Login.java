@@ -8,12 +8,16 @@ import koneksi.konek;
 
 public class Login extends javax.swing.JFrame {
 
+     private int userId;
+     
     public Login() {
         initComponents();
         close11.event(this);
         setLocationRelativeTo(null);
     }
-
+  public int getUserId() {
+        return userId; // Kembalikan ID pengguna
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -122,13 +126,15 @@ public class Login extends javax.swing.JFrame {
             //misal role udh ketemu dengan kita masukin usn dan pw nya 
             //dikasih if else , misal role admin masuk ke frame admin, user jg gt
             if ("admin".equals(role)) {
-                new admin().setVisible(true);
-                this.dispose(); 
-            } else if ("user".equals(role)) {
-                user usr = new user();
-                usr.setVisible(true);
-                this.dispose(); 
-            }
+            new admin().setVisible(true);
+            this.dispose();
+        } else if ("user".equals(role)) {
+            int userId = rs.getInt("id"); // Get id from query result
+            user usr = new user(userId); // Pass id to user constructor
+            usr.setVisible(true);
+            this.dispose();
+        }
+
             //misal usn/pw nya salah muncul exception ky gini
         } else {
             JOptionPane.showMessageDialog(this, 

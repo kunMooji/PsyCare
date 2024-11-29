@@ -17,6 +17,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JLabel;
 import javax.swing.Timer;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+
 
 public class admin extends javax.swing.JFrame {
 
@@ -33,6 +36,7 @@ public class admin extends javax.swing.JFrame {
     setLocationRelativeTo(null);
     setBackground(new Color(0, 0, 0, 0));
     tampilan1.event(this, background1);
+    
     }
 
      public void init(){
