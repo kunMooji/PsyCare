@@ -34,7 +34,7 @@ public class user extends javax.swing.JFrame {
    
 public user(int userId1) {
     initComponents();
-    setUserId(userId1); // Set the user ID
+    setUserId(userId1); // set user id
     init(); 
     setLocationRelativeTo(null);
     setBackground(new Color(0, 0, 0, 0));
@@ -347,7 +347,7 @@ public user(int userId1) {
         public static void main(String args[]) {
           java.awt.EventQueue.invokeLater(new Runnable() {
               public void run() {
-                  new user(1).setVisible(true); // Replace '1' with the desired user ID
+                  new user(1).setVisible(true);
               }
           });
       }

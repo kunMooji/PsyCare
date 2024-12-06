@@ -16,11 +16,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JButton;
 
-public class registrasi extends javax.swing.JFrame {
+public class registrasiAdmin extends javax.swing.JFrame {
     
     private com.raven.datechooser.DateChooser dateChooser;
     
-    public registrasi() {
+    public registrasiAdmin() {
         initComponents();
         setLocationRelativeTo(null);
         initDateChooser();
@@ -138,7 +138,7 @@ public class registrasi extends javax.swing.JFrame {
         jLabel10.setText("tanggal_lahir");
         login_container.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 290, 110, -1));
 
-        jComboBoxrole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "user" }));
+        jComboBoxrole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "admin" }));
         jComboBoxrole.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBoxroleActionPerformed(evt);
@@ -254,7 +254,7 @@ public class registrasi extends javax.swing.JFrame {
         if (rowsInserted > 0) {
             JOptionPane.showMessageDialog(this, "Registrasi berhasil!");
             this.dispose(); 
-            new Login().setVisible(true); 
+            new admin().setVisible(true); 
         }
     } catch (SQLException e) {
         e.printStackTrace();
@@ -284,20 +284,21 @@ public class registrasi extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(registrasi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(registrasiAdmin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(registrasi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(registrasiAdmin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(registrasi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(registrasiAdmin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(registrasi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(registrasiAdmin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new registrasi().setVisible(true);
+                new registrasiAdmin().setVisible(true);
             }
         });
     }
